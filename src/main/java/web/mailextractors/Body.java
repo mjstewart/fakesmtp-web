@@ -1,12 +1,15 @@
 package web.mailextractors;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
 public class Body {
 
+    @Column(columnDefinition = "clob")
     private String body;
+
     private ContentType contentType;
 
     public Body() {}
