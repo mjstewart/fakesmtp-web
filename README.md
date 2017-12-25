@@ -5,6 +5,6 @@ Work in progress
 
 ## Goals 
 
-- Provide web front end connected to websockets for real time emails.
+- Provide app front end connected to websockets for real time emails.
 - Provide rest interface to access emails
 

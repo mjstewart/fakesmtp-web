@@ -1,0 +1,67 @@
+{
+  "id": "ff92e909-aafd-4ee2-affe-ecf631efe582",
+  "subject": "a test email subject",
+  "from": [
+    "test@email.com"
+  ],
+  "replyTo": [
+    "test@email.com"
+  ],
+  "body": {
+    "content": "<html><body><h1>Hi there with attachments</h1></body></html>",
+    "contentType": {
+      "mediaType": "text/html",
+      "charset": "utf-8"
+    }
+  },
+  "receivedDate": null,
+  "sentDate": "2017-01-01T09:30:05",
+  "description": "a test email description",
+  "toRecipients": [
+    "person1@email.com",
+    "person2@email.com"
+  ],
+  "ccRecipients": [
+    "person3@email.com",
+    "person4@email.com"
+  ],
+  "bccRecipients": [],
+  "attachments": [
+    {
+      "id": "ff92e909-aafd-4ee2-affe-ecf631efe100",
+      "fileName": "style",
+      "disposition": "inline",
+      "contentType": {
+        "mediaType": "text/css",
+        "charset": "utf-8"
+      }
+    },
+    {
+      "id": "ff92e909-aafd-4ee2-affe-ecf631efe101",
+      "fileName": "house",
+      "disposition": "inline",
+      "contentType": {
+        "mediaType": "image/jpeg",
+        "charset": null
+      }
+    },
+    {
+      "id": "ff92e909-aafd-4ee2-affe-ecf631efe102",
+      "fileName": "notes.txt",
+      "disposition": "attachment",
+      "contentType": {
+        "mediaType": "text/plain",
+        "charset": "utf-8"
+      }
+    },
+    {
+      "id": "ff92e909-aafd-4ee2-affe-ecf631efe103",
+      "fileName": "sales.pdf",
+      "disposition": "attachment",
+      "contentType": {
+        "mediaType": "application/pdf",
+        "charset": null
+      }
+    }
+  ]
+}

@@ -1,8 +1,11 @@
-package web.domain;
+package app.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.NaturalId;
-import web.mailextractors.Body;
-import web.mailextractors.MimeAttachment;
+import app.mailextractors.Body;
+import app.mailextractors.MimeAttachment;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import java.util.*;
@@ -20,14 +23,12 @@ import java.util.*;
 })
 public class MimeMessageMeta {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @NaturalId
-    private UUID emailId;
+    private UUID id;
 
     private String subject;
 
+    // fromWho as from is a reserved sql keyword
+    @JsonProperty("from")
     @ElementCollection
     private Set<String> fromWho;
 
@@ -51,14 +52,15 @@ public class MimeMessageMeta {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MimeAttachment> attachments;
 
-    private MimeMessageMeta() {}
+    private MimeMessageMeta() {
+    }
 
-    private MimeMessageMeta(UUID emailId, String subject, Set<String> fromWho,
+    private MimeMessageMeta(UUID id, String subject, Set<String> fromWho,
                             Set<String> replyTo, Body body, Date receivedDate, Date sentDate,
-                           String description, Set<String> toRecipients,
+                            String description, Set<String> toRecipients,
                             Set<String> ccRecipients, Set<String> bccRecipients,
-                           Set<MimeAttachment> attachments) {
-        this.emailId = emailId;
+                            Set<MimeAttachment> attachments) {
+        this.id = id;
         this.subject = subject;
         this.fromWho = fromWho;
         this.replyTo = replyTo;
@@ -72,14 +74,10 @@ public class MimeMessageMeta {
         this.attachments = attachments;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
-
-    public UUID getEmailId() {
-        return emailId;
-    }
-
+    
     public String getSubject() {
         return subject;
     }
@@ -129,19 +127,18 @@ public class MimeMessageMeta {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MimeMessageMeta that = (MimeMessageMeta) o;
-        return Objects.equals(emailId, that.emailId);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(emailId);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "MimeMessageMeta{" +
                 "id=" + id +
-                ", emailId=" + emailId +
                 ", subject='" + subject + '\'' +
                 ", fromWho=" + fromWho +
                 ", replyTo=" + replyTo +
@@ -161,6 +158,7 @@ public class MimeMessageMeta {
     }
 
     public static class Builder {
+        private UUID id = UUID.randomUUID();
         private String subject;
         private Set<String> fromWho = Set.of();
         private Set<String> replyTo = Set.of();
@@ -172,6 +170,11 @@ public class MimeMessageMeta {
         private Set<String> ccRecipients = Set.of();
         private Set<String> bccRecipients = Set.of();
         private Set<MimeAttachment> attachments = Set.of();
+
+        public Builder id(UUID id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder subject(String subject) {
             this.subject = subject;
@@ -229,7 +232,7 @@ public class MimeMessageMeta {
         }
 
         public MimeMessageMeta create() {
-            return new MimeMessageMeta(UUID.randomUUID(), subject, fromWho, replyTo, body,
+            return new MimeMessageMeta(id, subject, fromWho, replyTo, body,
                     receivedDate, sentDate, description,
                     toRecipients, ccRecipients, bccRecipients, attachments);
         }

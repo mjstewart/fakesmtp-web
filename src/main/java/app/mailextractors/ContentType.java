@@ -1,4 +1,4 @@
-package web.mailextractors;
+package app.mailextractors;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;

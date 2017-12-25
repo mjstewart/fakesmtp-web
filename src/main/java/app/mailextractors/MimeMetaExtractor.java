@@ -1,9 +1,9 @@
-package web.mailextractors;
+package app.mailextractors;
 
 import io.vavr.CheckedFunction0;
 import io.vavr.Tuple2;
 import io.vavr.control.Try;
-import web.domain.MimeMessageMeta;
+import app.domain.MimeMessageMeta;
 
 import javax.mail.Address;
 import javax.mail.Message;

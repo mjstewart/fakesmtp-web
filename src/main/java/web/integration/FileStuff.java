@@ -39,7 +39,7 @@ import java.nio.file.StandardOpenOption;
 //    }
 //
 //    @Bean
-//    public IntegrationFlow files(@Value("${input-directory}") File in,
+//    public IntegrationFlow readFileSystemFlow(@Value("${input-directory}") File in,
 //                                 @Value("${poll-rate-seconds}") long pollRateSeconds) {
 //
 //        GenericTransformer<File, Message<File>> transformer = source -> {

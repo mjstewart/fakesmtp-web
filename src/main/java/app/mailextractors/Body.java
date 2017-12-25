@@ -1,4 +1,4 @@
-package web.mailextractors;
+package app.mailextractors;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -8,23 +8,23 @@ import java.util.Objects;
 public class Body {
 
     @Column(columnDefinition = "clob")
-    private String body;
+    private String content;
 
     private ContentType contentType;
 
     public Body() {}
 
-    public Body(String body, ContentType contentType) {
-        this.body = body;
+    public Body(String content, ContentType contentType) {
+        this.content = content;
         this.contentType = contentType;
     }
 
-    public Body(String body) {
-        this(body, null);
+    public Body(String content) {
+        this(content, null);
     }
 
-    public String getBody() {
-        return body;
+    public String getContent() {
+        return content;
     }
 
     public ContentType getContentType() {
@@ -36,19 +36,19 @@ public class Body {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Body body1 = (Body) o;
-        return Objects.equals(body, body1.body) &&
+        return Objects.equals(content, body1.content) &&
                 Objects.equals(contentType, body1.contentType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(body, contentType);
+        return Objects.hash(content, contentType);
     }
 
     @Override
     public String toString() {
         return "Body{" +
-                "body='" + body + '\'' +
+                "content='" + content + '\'' +
                 ", contentType=" + contentType +
                 '}';
     }

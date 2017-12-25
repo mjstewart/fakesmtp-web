@@ -1,10 +1,10 @@
-package web.integration;
+package app.integration;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.integration.channel.PublishSubscribeChannel;
 import org.springframework.integration.dsl.ConsumerEndpointSpec;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
@@ -17,21 +17,23 @@ import org.springframework.integration.jpa.support.PersistMode;
 import org.springframework.integration.transformer.GenericTransformer;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.SubscribableChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.ReflectionUtils;
-import web.domain.MimeMessageMeta;
-import web.mailextractors.MimeMetaExtractor;
+import app.domain.MimeMessageMeta;
+import app.mailextractors.MimeMetaExtractor;
 
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManagerFactory;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Properties;
 
 @Configuration
+@Profile("!test")
 public class EmailIntegration {
-
-    private final Log logger = LogFactory.getLog(EmailIntegration.class);
     private final Session session = Session.getDefaultInstance(new Properties());
 
     private EntityManagerFactory entityManagerFactory;
@@ -40,17 +42,22 @@ public class EmailIntegration {
         this.entityManagerFactory = entityManagerFactory;
     }
 
+    /**
+     * returns a pub/sub channel since there are many consumers such as
+     * (Debugging loggers, save to database flow, web socket flow)
+     */
     @Bean
-    public MessageChannel emailChannel() {
+    public SubscribableChannel emailChannel() {
         return MessageChannels.publishSubscribe().get();
-//        return MessageChannels.direct().get();
     }
 
-
+    /**
+     * Polls the {@code input-files} directory every {@code poll-rate-seconds} and
+     * sends the transformed file into the {@code emailChannel} for consumers to process.
+     */
     @Bean
-    public IntegrationFlow files(@Value("${input-directory}") File in,
-                                 @Value("${poll-rate-seconds}") long pollRateSeconds) {
-
+    public IntegrationFlow readFileSystemFlow(@Value("${input-directory}") File in,
+                                              @Value("${poll-rate-seconds}") long pollRateSeconds) {
         return IntegrationFlows.from(Files.inboundAdapter(in)
                 .autoCreateDirectory(false)
                 .preventDuplicates(true)
@@ -60,9 +67,12 @@ public class EmailIntegration {
                 .get();
     }
 
-
+    /**
+     * When the {@code emailChannel} publishes a {@code Message<MimeMessageMeta>}, save it to the
+     * database which is exposed as a REST service through a repository.
+     */
     @Bean
-    public IntegrationFlow dbFlow() {
+    public IntegrationFlow databaseFlow() {
         return IntegrationFlows.from(emailChannel())
                 .handle(Jpa.outboundAdapter(entityManagerFactory)
                         .entityClass(MimeMessageMeta.class)
@@ -70,16 +80,18 @@ public class EmailIntegration {
                 .get();
     }
 
+    /**
+     * Transforms a raw email file which FakeSMTP produces (.eml / RFC822 format) into a
+     * {@code MimeMessageMeta} domain object.
+     */
     private GenericTransformer<File, Message<MimeMessageMeta>> emailFileTransformer() {
         return (File source) -> {
             try (InputStream is = new FileInputStream(source)) {
                 MimeMessage message = new MimeMessage(session, is);
                 MimeMessageMeta meta = MimeMetaExtractor.parse(message);
 
-                logger.info("emailFileTransformer mapped email for subject '" + meta.getSubject() + "'");
-
                 return MessageBuilder.withPayload(meta)
-                        .setHeader(FileHeaders.FILENAME, meta.getEmailId())
+                        .setHeader(FileHeaders.FILENAME, meta.getId().toString())
                         .build();
             } catch (Exception e) {
                 ReflectionUtils.rethrowRuntimeException(e);
