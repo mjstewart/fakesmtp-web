@@ -1,25 +1,25 @@
-Date: Sun, 24 Dec 2017 22:11:25 +1030 (ACDT)
+Date: Mon, 25 Dec 2017 14:19:49 +1030 (ACDT)
 From: test@email.com
-To: person@email.com
+To: person1@email.com, person2@Email.com
 Cc: me1@email.com, me2@email.com
 Bcc: me3@email.com, me4@email.com
-Message-ID: <2012330741.2.1514115685454@ubuntu>
+Message-ID: <1076607567.2.1514173789921@ubuntu>
 Subject: A simple test email
 MIME-Version: 1.0
 Content-Type: multipart/mixed; 
-	boundary="----=_Part_0_96406857.1514115685270"
+	boundary="----=_Part_0_2065857933.1514173789670"
 Content-Description: a message description
 
-------=_Part_0_96406857.1514115685270
+------=_Part_0_2065857933.1514173789670
 Content-Type: multipart/related; 
-	boundary="----=_Part_1_1276261147.1514115685324"
+	boundary="----=_Part_1_22671767.1514173789695"
 
-------=_Part_1_1276261147.1514115685324
+------=_Part_1_22671767.1514173789695
 Content-Type: text/html;charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-<html><body><h1>Hi there</h1></body></html>
-------=_Part_1_1276261147.1514115685324
+<html><body><h1>Hi there with attachments</h1></body></html>
+------=_Part_1_22671767.1514173789695
 Content-Type: image/png
 Content-Transfer-Encoding: base64
 Content-Disposition: inline
@@ -606,7 +606,7 @@ BsDIQkRERAbAyEJEREQGwMhCREREBsDIQkRERAbAyEJEREQGwMhCREREBsDIQkRERAbAyEJEREQG
 wMhCREREBsDIQkRERAbAyEJEREQGwMhCREREBvD/Ae5dYvsvw7PfAAAARHpUWHRDb21tZW50AAB4
 2nNNySxJTVFIqlQISCzNUQjOSC3KTcxTSMsvUggPcM7JLEgsKtFRCChNyslMVnDJz03MzAMA0cYS
 C/gtqgsAAAAASUVORK5CYII=
-------=_Part_1_1276261147.1514115685324
+------=_Part_1_22671767.1514173789695
 Content-Type: text/css; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
@@ -620,9 +620,9 @@ Content-ID: <styles>
 h1 {
     font-size: 24px;
 }
-------=_Part_1_1276261147.1514115685324--
+------=_Part_1_22671767.1514173789695--
 
-------=_Part_0_96406857.1514115685270
+------=_Part_0_2065857933.1514173789670
 Content-Type: text/plain; charset=us-ascii; name=list.txt
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment; filename=list.txt
@@ -633,7 +633,7 @@ nascetur ridiculus mus. Fusce ac dolor a leo tempus mollis ut eu enim. Integer i
 ipsum vel semper. Sed sagittis dapibus nibh. Nam nulla diam, feugiat vel massa nec, hendrerit egestas leo.
 Nullam est elit, faucibus nec lacus non, accumsan hendrerit justo.
 
-------=_Part_0_96406857.1514115685270
+------=_Part_0_2065857933.1514173789670
 Content-Type: text/plain; charset=us-ascii; name=notes.txt
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment; filename=notes.txt
@@ -642,4 +642,4 @@ Quisque pellentesque arcu quis malesuada elementum. Donec ut dui interdum, ultri
 Nam est sapien, volutpat aliquet elementum vitae, volutpat eget sem. Donec commodo tortor ac arcu sagittis
 imperdiet. Curabitur blandit nunc in ligula sollicitudin mollis. Quisque malesuada ligula elementum, posuere ipsum vitae,
 rhoncus ligula. Phasellus quis nunc felis.
-------=_Part_0_96406857.1514115685270--
+------=_Part_0_2065857933.1514173789670--

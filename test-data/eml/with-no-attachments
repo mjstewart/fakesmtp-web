@@ -1,23 +1,23 @@
-Date: Sun, 24 Dec 2017 22:11:59 +1030 (ACDT)
+Date: Mon, 25 Dec 2017 14:19:49 +1030 (ACDT)
 From: test@email.com
-To: person@email.com
+To: person1@email.com, person2@Email.com
 Cc: me1@email.com, me2@email.com
 Bcc: me3@email.com, me4@email.com
-Message-ID: <514455215.2.1514115719299@ubuntu>
+Message-ID: <1841396611.5.1514173789938@ubuntu>
 Subject: A simple test email
 MIME-Version: 1.0
 Content-Type: multipart/mixed; 
-	boundary="----=_Part_0_898557489.1514115719009"
+	boundary="----=_Part_3_440737101.1514173789935"
 
-------=_Part_0_898557489.1514115719009
+------=_Part_3_440737101.1514173789935
 Content-Type: multipart/related; 
-	boundary="----=_Part_1_436532993.1514115719133"
+	boundary="----=_Part_4_2141817446.1514173789935"
 
-------=_Part_1_436532993.1514115719133
+------=_Part_4_2141817446.1514173789935
 Content-Type: text/html;charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-<html><body><h1>Hi there</h1></body></html>
-------=_Part_1_436532993.1514115719133--
+<html><body><h1>Hi there with no attachments</h1></body></html>
+------=_Part_4_2141817446.1514173789935--
 
-------=_Part_0_898557489.1514115719009--
+------=_Part_3_440737101.1514173789935--

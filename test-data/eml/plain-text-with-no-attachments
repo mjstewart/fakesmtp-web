@@ -1,0 +1,21 @@
+Date: Mon, 25 Dec 2017 14:19:49 +1030 (ACDT)
+From: test@email.com
+To: person1@email.com, person2@Email.com
+Message-ID: <1904253191.8.1514173789975@ubuntu>
+Subject: A simple test email for a plain text body
+MIME-Version: 1.0
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_6_1577592551.1514173789963"
+
+------=_Part_6_1577592551.1514173789963
+Content-Type: multipart/related; 
+	boundary="----=_Part_7_854587510.1514173789963"
+
+------=_Part_7_854587510.1514173789963
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi there this is a plain text body
+------=_Part_7_854587510.1514173789963--
+
+------=_Part_6_1577592551.1514173789963--
