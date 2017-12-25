@@ -35,6 +35,12 @@
 			<artifactId>spring-integration-file</artifactId>
 			<version>5.0.0.RELEASE</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.integration/spring-integration-jpa -->
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-jpa</artifactId>
+			<version>5.0.0.RELEASE</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.integration/spring-integration-http -->
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
@@ -134,6 +140,4 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
-
 </project>

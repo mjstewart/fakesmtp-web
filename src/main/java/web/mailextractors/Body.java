@@ -1,10 +1,15 @@
 package web.mailextractors;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class Body {
+
     private String body;
     private ContentType contentType;
+
+    public Body() {}
 
     public Body(String body, ContentType contentType) {
         this.body = body;
@@ -36,4 +41,13 @@ public class Body {
     public int hashCode() {
         return Objects.hash(body, contentType);
     }
+
+    @Override
+    public String toString() {
+        return "Body{" +
+                "body='" + body + '\'' +
+                ", contentType=" + contentType +
+                '}';
+    }
 }
+

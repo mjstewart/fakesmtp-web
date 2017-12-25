@@ -1,0 +1,183 @@
+        Mon, 25 Dec 2017 06:55:34 +0000 (UTC)
+Date: Mon, 25 Dec 2017 17:25:34 +1030 (ACDT)
+From: no-reply@user-registration.com
+To: user1011@email.com
+Message-ID: <707140015.2.1514184934556@DESKTOP-8F96UU9>
+Subject: Warehouse manager - Activate new account
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+	boundary="----=_Part_0_811307390.1514184929723"
+X-Antivirus: Avast (VPS 171224-0, 12/24/2017), Outbound message
+X-Antivirus-Status: Clean
+
+------=_Part_0_811307390.1514184929723
+Content-Type: multipart/related;
+	boundary="----=_Part_1_320440270.1514184929729"
+
+------=_Part_1_320440270.1514184929729
+Content-Type: text/html;charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="cid:styles">
+</head>
+<body>
+<div class="ui container">
+    <div>
+    <h1 class="ui dividing header">Account verification</h1>
+    <p>Hey there paul rogers!,</p>
+    <p>Thanks for signing up, please click the below link to activate your account</p>
+    <a href="localhost:8080/register/verify?token=1a0c920c-1eb6-4642-a982-aa8f60b78401">Activate</a>
+    <p>Hope to catch your soon</p>
+    <p>Warehouse management system</p>
+</div>
+</div>
+</body>
+</html>
+------=_Part_1_320440270.1514184929729
+Content-Type: text/css; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-ID: <styles>
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1 0 auto;
+}
+
+footer {
+    min-height: 200px;
+    background: #253031;
+    margin-top: 50px;
+}
+
+.linkable-button {
+    color: inherit;
+}
+
+.linkable-button:hover {
+    color: inherit;
+}
+
+.pagination {
+    display: flex;
+}
+
+.pagination p {
+    margin-right: 15px;
+}
+
+.pagination a {
+    margin: 0 5px 0 5px;
+}
+
+.center {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+.http-error {
+    margin: 50px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.available-call-time-list {
+    list-style-type: none;
+    padding: 0;
+}
+------=_Part_1_320440270.1514184929729
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-ID: <dummy>
+
+dummy text file to test email attachments.
+------=_Part_1_320440270.1514184929729--
+
+------=_Part_0_811307390.1514184929723
+Content-Type: text/css; charset=us-ascii; name=styles.css
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename=styles.css
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1 0 auto;
+}
+
+footer {
+    min-height: 200px;
+    background: #253031;
+    margin-top: 50px;
+}
+
+.linkable-button {
+    color: inherit;
+}
+
+.linkable-button:hover {
+    color: inherit;
+}
+
+.pagination {
+    display: flex;
+}
+
+.pagination p {
+    margin-right: 15px;
+}
+
+.pagination a {
+    margin: 0 5px 0 5px;
+}
+
+.center {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+.http-error {
+    margin: 50px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.available-call-time-list {
+    list-style-type: none;
+    padding: 0;
+}
+------=_Part_0_811307390.1514184929723
+Content-Type: text/plain; charset=us-ascii; name=notes.txt
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename=notes.txt
+
+dummy text file to test email attachments.
+------=_Part_0_811307390.1514184929723--

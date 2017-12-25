@@ -1,8 +1,17 @@
 package web.mailextractors;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Objects;
 
+@Entity
 public class MimeAttachment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private String fileName;
     private String disposition;
     private ContentType contentType;
@@ -16,6 +25,9 @@ public class MimeAttachment {
         this.contentType = contentType;
     }
 
+    public Long getId() {
+        return id;
+    }
 
     public String getFileName() {
         return fileName;
@@ -47,7 +59,8 @@ public class MimeAttachment {
     @Override
     public String toString() {
         return "MimeAttachment{" +
-                "fileName='" + fileName + '\'' +
+                "id=" + id +
+                ", fileName='" + fileName + '\'' +
                 ", disposition='" + disposition + '\'' +
                 ", contentType=" + contentType +
                 '}';

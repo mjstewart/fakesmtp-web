@@ -23,7 +23,7 @@ public class MimeMetaExtractor {
 
         return MimeMessageMeta.builder()
                 .subject(stringExtractor(message::getSubject))
-                .from(addressExtractor(message::getFrom))
+                .fromWho(addressExtractor(message::getFrom))
                 .replyTo(addressExtractor(message::getReplyTo))
                 .body(body)
                 .receivedDate(dateExtractor(message::getReceivedDate))
@@ -40,12 +40,12 @@ public class MimeMetaExtractor {
     }
 
 
-    public static List<String> toList(Address[] addresses) {
-        return addresses == null ? List.of() : Arrays.stream(addresses).map(Address::toString).collect(Collectors.toList());
+    public static Set<String> toSet(Address[] addresses) {
+        return addresses == null ? Set.of() : Arrays.stream(addresses).map(Address::toString).collect(Collectors.toSet());
     }
 
-    public static List<String> addressExtractor(CheckedFunction0<Address[]> f) {
-        return Try.of(f).map(MimeMetaExtractor::toList).getOrElseGet(t -> List.of());
+    public static Set<String> addressExtractor(CheckedFunction0<Address[]> f) {
+        return Try.of(f).map(MimeMetaExtractor::toSet).getOrElseGet(t -> Set.of());
     }
 
     public static String stringExtractor(CheckedFunction0<String> f) {

@@ -34,4 +34,12 @@ public class BodyAttachment {
     public int hashCode() {
         return Objects.hash(body, attachments);
     }
+
+    @Override
+    public String toString() {
+        return "BodyAttachment{" +
+                "body=" + body +
+                ", attachments=" + attachments +
+                '}';
+    }
 }

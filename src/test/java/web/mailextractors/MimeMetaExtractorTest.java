@@ -104,6 +104,59 @@ public class MimeMetaExtractorTest {
 //    }
 
     @Test
+    public void getAllAttachments_EmailWithAttachments_FindsBodyAndAllAttachments() throws Exception {
+        File withAttachments = new File(TEST_EMAILS_PATH + "with-attachments");
+        FileInputStream input = new FileInputStream(withAttachments);
+        MimeMessage message = new MimeMessage(session, input);
+        input.close();
+
+        Optional<BodyAttachment> result = MimeMetaExtractor.getAllAttachments(message);
+
+        assertThat(result).isNotNull();
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get().getBody().isPresent()).isTrue();
+        assertThat(result.get().getBody().get()).isEqualTo(new Body(
+                "<html><body><h1>Hi there with attachments</h1></body></html>",
+                new ContentType(MediaType.TEXT_HTML_VALUE, "UTF-8")
+        ));
+
+        assertThat(result.get().getAttachments()).isNotNull();
+        assertThat(result.get().getAttachments()).containsExactlyInAnyOrder(
+                new MimeAttachment("house", INLINE,
+                        new ContentType(MediaType.IMAGE_PNG_VALUE, null)),
+
+                new MimeAttachment("styles", INLINE,
+                        new ContentType("text/css", "us-ascii")),
+
+                new MimeAttachment("list.txt", ATTACHMENT,
+                        new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii")),
+
+                new MimeAttachment("notes.txt", ATTACHMENT,
+                        new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii"))
+        );
+    }
+
+    @Test
+    public void getAllAttachments_EmailWithNoAttachments_NoAttachmentsFound() throws Exception {
+        File withAttachments = new File(TEST_EMAILS_PATH + "with-no-attachments");
+        FileInputStream input = new FileInputStream(withAttachments);
+        MimeMessage message = new MimeMessage(session, input);
+        input.close();
+
+        Optional<BodyAttachment> result = MimeMetaExtractor.getAllAttachments(message);
+
+        assertThat(result).isNotNull();
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get().getBody().isPresent()).isTrue();
+        assertThat(result.get().getBody().get()).isEqualTo(new Body(
+                "<html><body><h1>Hi there with no attachments</h1></body></html>",
+                new ContentType(MediaType.TEXT_HTML_VALUE, "UTF-8")
+        ));
+
+        assertThat(result.get().getAttachments()).isEmpty();
+    }
+
+    @Test
     public void parse_SetsAllFieldsCorrectly_WithAttachments() throws Exception {
         File withAttachments = new File(TEST_EMAILS_PATH + "with-attachments");
         FileInputStream input = new FileInputStream(withAttachments);
@@ -113,7 +166,7 @@ public class MimeMetaExtractorTest {
         // Expect all values that were used in createTestMessageWithAttachments.
         MimeMessageMeta meta = MimeMetaExtractor.parse(message);
         assertThat(meta.getEmailId()).isNotNull();
-        assertThat(meta.getFrom()).containsExactlyInAnyOrder("test@email.com");
+        assertThat(meta.getFromWho()).containsExactlyInAnyOrder("test@email.com");
         assertThat(meta.getBody()).isEqualTo(new Body(
                 "<html><body><h1>Hi there with attachments</h1></body></html>",
                 new ContentType(MediaType.TEXT_HTML_VALUE, "UTF-8")
@@ -150,7 +203,7 @@ public class MimeMetaExtractorTest {
         // Expect all values that were used in createTestMessageWithPlainTextBodyAndNoAttachments.
         MimeMessageMeta meta = MimeMetaExtractor.parse(message);
         assertThat(meta.getEmailId()).isNotNull();
-        assertThat(meta.getFrom()).containsExactlyInAnyOrder("test@email.com");
+        assertThat(meta.getFromWho()).containsExactlyInAnyOrder("test@email.com");
         assertThat(meta.getBody()).isEqualTo(new Body(
                 "Hi there this is a plain text body",
                 new ContentType(MediaType.TEXT_PLAIN_VALUE, "UTF-8")
@@ -170,7 +223,7 @@ public class MimeMetaExtractorTest {
 
         assertThat(meta.getEmailId()).isNotNull();
         assertThat(meta.getSubject()).isNull();
-        assertThat(meta.getFrom()).isEmpty();
+        assertThat(meta.getFromWho()).isEmpty();
         assertThat(meta.getReplyTo()).isEmpty();
         assertThat(meta.getBody()).isNull();
         assertThat(meta.getReceivedDate()).isNull();
@@ -183,56 +236,109 @@ public class MimeMetaExtractorTest {
     }
 
     @Test
-    public void emailWithAttachments_FindsBodyAndAllAttachments() throws Exception {
-        File withAttachments = new File(TEST_EMAILS_PATH + "with-attachments");
+    public void parse_fakeSMTPGeneratedNoAttachments_IsValid() throws Exception {
+        File withNoAttachments = new File(TEST_EMAILS_PATH + "fakeSMTP-generated-no-attachments.eml");
+        FileInputStream input = new FileInputStream(withNoAttachments);
+        MimeMessage message = new MimeMessage(session, input);
+        input.close();
+
+        // Expect all values that are in fakeSMTP-generated-no-attachments.eml
+        MimeMessageMeta meta = MimeMetaExtractor.parse(message);
+
+        assertThat(meta.getBody()).isEqualTo(new Body(
+                "<!DOCTYPE html>\n" +
+                        "<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
+                        "<head>\n" +
+                        "\n" +
+                        "    <meta charset=\"UTF-8\"/>\n" +
+                        "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"/>\n" +
+                        "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/>\n" +
+                        "    <link rel=\"stylesheet\" href=\"cid:styles\">\n" +
+                        "</head>\n" +
+                        "<body>\n" +
+                        "<div class=\"ui container\">\n" +
+                        "    <div>\n" +
+                        "    <h1 class=\"ui dividing header\">Account verification</h1>\n" +
+                        "    <p>Hey there paul smith!,</p>\n" +
+                        "    <p>Thanks for signing up, please click the below link to activate your account</p>\n" +
+                        "    <a href=\"localhost:8080/register/verify?token=b7ba6cd0-cdcf-4189-8dbd-85e7fb5d785c\">Activate</a>\n" +
+                        "    <p>Hope to catch your soon</p>\n" +
+                        "    <p>Warehouse management system</p>\n" +
+                        "</div>\n" +
+                        "</div>\n" +
+                        "</body>\n" +
+                        "</html>",
+                new ContentType(MediaType.TEXT_HTML_VALUE, "utf-8")
+        ));
+
+        assertThat(meta.getEmailId()).isNotNull();
+        assertThat(meta.getFromWho()).containsExactlyInAnyOrder("no-reply@user-registration.com");
+        assertThat(meta.getToRecipients()).containsExactlyInAnyOrder("user535@email.com");
+        assertThat(meta.getCcRecipients()).isEmpty();
+        assertThat(meta.getBccRecipients()).isEmpty();
+        assertThat(meta.getSubject()).isEqualTo("Warehouse manager - Activate new account");
+        assertThat(meta.getSentDate()).isNotNull();
+        assertThat(meta.getDescription()).isNull();
+        assertThat(meta.getAttachments()).isEmpty();
+    }
+
+    @Test
+    public void parse_fakeSMTPGeneratedWithAttachments_IsValid() throws Exception {
+        File withAttachments = new File(TEST_EMAILS_PATH + "fakeSMTP-generated-with-attachments.eml");
         FileInputStream input = new FileInputStream(withAttachments);
         MimeMessage message = new MimeMessage(session, input);
         input.close();
 
-        Optional<BodyAttachment> result = MimeMetaExtractor.getAllAttachments(message);
+        // Expect all values that are in fakeSMTP-generated-no-attachments.eml
+        MimeMessageMeta meta = MimeMetaExtractor.parse(message);
 
-        assertThat(result).isNotNull();
-        assertThat(result.isPresent()).isTrue();
-        assertThat(result.get().getBody().isPresent()).isTrue();
-        assertThat(result.get().getBody().get()).isEqualTo(new Body(
-                "<html><body><h1>Hi there with attachments</h1></body></html>",
-                new ContentType(MediaType.TEXT_HTML_VALUE, "UTF-8")
+        assertThat(meta.getBody()).isEqualTo(new Body(
+                "<!DOCTYPE html>\n" +
+                        "<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
+                        "<head>\n" +
+                        "\n" +
+                        "    <meta charset=\"UTF-8\"/>\n" +
+                        "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"/>\n" +
+                        "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/>\n" +
+                        "    <link rel=\"stylesheet\" href=\"cid:styles\">\n" +
+                        "</head>\n" +
+                        "<body>\n" +
+                        "<div class=\"ui container\">\n" +
+                        "    <div>\n" +
+                        "    <h1 class=\"ui dividing header\">Account verification</h1>\n" +
+                        "    <p>Hey there paul rogers!,</p>\n" +
+                        "    <p>Thanks for signing up, please click the below link to activate your account</p>\n" +
+                        "    <a href=\"localhost:8080/register/verify?token=1a0c920c-1eb6-4642-a982-aa8f60b78401\">Activate</a>\n" +
+                        "    <p>Hope to catch your soon</p>\n" +
+                        "    <p>Warehouse management system</p>\n" +
+                        "</div>\n" +
+                        "</div>\n" +
+                        "</body>\n" +
+                        "</html>",
+                new ContentType(MediaType.TEXT_HTML_VALUE, "utf-8")
         ));
 
-        assertThat(result.get().getAttachments()).isNotNull();
-        assertThat(result.get().getAttachments()).containsExactlyInAnyOrder(
-                new MimeAttachment("house", INLINE,
-                        new ContentType(MediaType.IMAGE_PNG_VALUE, null)),
-
+        assertThat(meta.getEmailId()).isNotNull();
+        assertThat(meta.getFromWho()).containsExactlyInAnyOrder("no-reply@user-registration.com");
+        assertThat(meta.getToRecipients()).containsExactlyInAnyOrder("user1011@email.com");
+        assertThat(meta.getCcRecipients()).isEmpty();
+        assertThat(meta.getBccRecipients()).isEmpty();
+        assertThat(meta.getSubject()).isEqualTo("Warehouse manager - Activate new account");
+        assertThat(meta.getSentDate()).isNotNull();
+        assertThat(meta.getDescription()).isNull();
+        assertThat(meta.getAttachments()).containsExactlyInAnyOrder(
                 new MimeAttachment("styles", INLINE,
                         new ContentType("text/css", "us-ascii")),
 
-                new MimeAttachment("list.txt", ATTACHMENT,
+                new MimeAttachment("dummy", INLINE,
                         new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii")),
+
+                new MimeAttachment("styles.css", ATTACHMENT,
+                        new ContentType("text/css", "us-ascii")),
 
                 new MimeAttachment("notes.txt", ATTACHMENT,
                         new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii"))
         );
-    }
-
-    @Test
-    public void emailWithNoAttachments_NoAttachmentsFound() throws Exception {
-        File withAttachments = new File(TEST_EMAILS_PATH + "with-no-attachments");
-        FileInputStream input = new FileInputStream(withAttachments);
-        MimeMessage message = new MimeMessage(session, input);
-        input.close();
-
-        Optional<BodyAttachment> result = MimeMetaExtractor.getAllAttachments(message);
-
-        assertThat(result).isNotNull();
-        assertThat(result.isPresent()).isTrue();
-        assertThat(result.get().getBody().isPresent()).isTrue();
-        assertThat(result.get().getBody().get()).isEqualTo(new Body(
-                "<html><body><h1>Hi there with no attachments</h1></body></html>",
-                new ContentType(MediaType.TEXT_HTML_VALUE, "UTF-8")
-        ));
-
-        assertThat(result.get().getAttachments()).isEmpty();
     }
 
     @Test
@@ -278,6 +384,6 @@ public class MimeMetaExtractorTest {
     @Test
     public void toList() throws AddressException {
         Address[] addresses = {new InternetAddress("me@email.com"), new InternetAddress("you@email.com")};
-        assertThat(MimeMetaExtractor.toList(addresses)).containsExactly("me@email.com", "you@email.com");
+        assertThat(MimeMetaExtractor.toSet(addresses)).containsExactlyInAnyOrder("me@email.com", "you@email.com");
     }
 }

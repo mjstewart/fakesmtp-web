@@ -1,0 +1,45 @@
+        Mon, 25 Dec 2017 06:57:30 +0000 (UTC)
+Date: Mon, 25 Dec 2017 17:27:30 +1030 (ACDT)
+From: no-reply@user-registration.com
+To: user535@email.com
+Message-ID: <869162674.5.1514185050255@DESKTOP-8F96UU9>
+Subject: Warehouse manager - Activate new account
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+	boundary="----=_Part_3_935652422.1514185045553"
+X-Antivirus: Avast (VPS 171224-0, 12/24/2017), Outbound message
+X-Antivirus-Status: Clean
+
+------=_Part_3_935652422.1514185045553
+Content-Type: multipart/related;
+	boundary="----=_Part_4_1066843049.1514185045553"
+
+------=_Part_4_1066843049.1514185045553
+Content-Type: text/html;charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="cid:styles">
+</head>
+<body>
+<div class="ui container">
+    <div>
+    <h1 class="ui dividing header">Account verification</h1>
+    <p>Hey there paul smith!,</p>
+    <p>Thanks for signing up, please click the below link to activate your account</p>
+    <a href="localhost:8080/register/verify?token=b7ba6cd0-cdcf-4189-8dbd-85e7fb5d785c">Activate</a>
+    <p>Hope to catch your soon</p>
+    <p>Warehouse management system</p>
+</div>
+</div>
+</body>
+</html>
+------=_Part_4_1066843049.1514185045553--
+
+------=_Part_3_935652422.1514185045553--

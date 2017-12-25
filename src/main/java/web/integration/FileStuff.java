@@ -24,13 +24,13 @@ import java.nio.file.StandardOpenOption;
 //
 //
 //    @Bean
-//    public MessageChannel emailProcessingChannel() {
+//    public MessageChannel emailChannel() {
 //        return MessageChannels.direct().get();
 //    }
 //
 //    @Bean
 //    public IntegrationFlow outputDirFlow(@Value("${output-directory}") File out) {
-//        return IntegrationFlows.from(emailProcessingChannel())
+//        return IntegrationFlows.from(emailChannel())
 //                .handle(Files.outboundAdapter(out).fileNameGenerator(message -> {
 //                    String filename = String.class.cast(message.getHeaders().get(FileHeaders.FILENAME));
 //                    return filename.split("\\.")[0] + "txt";
@@ -59,7 +59,7 @@ import java.nio.file.StandardOpenOption;
 //                .preventDuplicates(true)
 //                .patternFilter("*.eml"), c -> c.poller(Pollers.fixedRate(pollRateSeconds)))
 //                .transform(File.class, transformer)
-//                .channel(emailProcessingChannel())
+//                .channel(emailChannel())
 //                .get();
 //
 //    }

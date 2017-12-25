@@ -1,10 +1,14 @@
 package web.mailextractors;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class ContentType {
     private String mediaType;
     private String charset;
+
+    public ContentType() {}
 
     public ContentType(String mediaType) {
         this(mediaType, null);
