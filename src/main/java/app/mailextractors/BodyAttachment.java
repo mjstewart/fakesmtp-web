@@ -9,9 +9,9 @@ import java.util.Optional;
  */
 public class BodyAttachment {
     private Body body;
-    private List<MimeAttachment> attachments;
+    private List<EmailAttachment> attachments;
 
-    public BodyAttachment(Body body, List<MimeAttachment> attachments) {
+    public BodyAttachment(Body body, List<EmailAttachment> attachments) {
         this.body = body;
         this.attachments = attachments;
     }
@@ -20,7 +20,7 @@ public class BodyAttachment {
         return Optional.ofNullable(body);
     }
 
-    public List<MimeAttachment> getAttachments() {
+    public List<EmailAttachment> getAttachments() {
         return attachments;
     }
 

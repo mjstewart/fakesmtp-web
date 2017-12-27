@@ -1,6 +1,6 @@
 package app.web;
 
-import app.domain.MimeMessageMeta;
+import app.domain.EmailMessage;
 import app.utils.TestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class MimeMessageMetaRepositoryTest {
+public class EmailMessageRepositoryTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,7 +37,7 @@ public class MimeMessageMetaRepositoryTest {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private MimeMessageMetaRepository repository;
+    private EmailMessageRepository repository;
 
     @Test
     public void postIsDisabled_405MethodNotAllowed() throws Exception {
@@ -55,7 +55,7 @@ public class MimeMessageMetaRepositoryTest {
 
     @Test
     public void patchIsDisabled_405MethodNotAllowed() throws Exception {
-        MimeMessageMeta email = TestUtils.createTestEmailOne();
+        EmailMessage email = TestUtils.createTestEmailOne();
         repository.save(email);
 
         mockMvc.perform(patch("/emails/" + email.getId())
@@ -71,14 +71,14 @@ public class MimeMessageMetaRepositoryTest {
 
     @Test
     public void get_ReturnsAllEmails() throws Exception {
-        MimeMessageMeta firstEmail = TestUtils.createTestEmailOne();
-        MimeMessageMeta secondEmail = TestUtils.createTestEmailTwo();
+        EmailMessage firstEmail = TestUtils.createTestEmailOne();
+        EmailMessage secondEmail = TestUtils.createTestEmailTwo();
         repository.save(firstEmail);
         repository.save(secondEmail);
 
-        ResponseEntity<PagedResources<MimeMessageMeta>> result = restTemplate.exchange("/emails",
+        ResponseEntity<PagedResources<EmailMessage>> result = restTemplate.exchange("/emails",
                 HttpMethod.GET, null,
-                new TypeReferences.PagedResourcesType<MimeMessageMeta>() {
+                new TypeReferences.PagedResourcesType<EmailMessage>() {
                 });
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);

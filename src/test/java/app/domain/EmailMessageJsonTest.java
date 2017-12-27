@@ -2,7 +2,7 @@ package app.domain;
 
 import app.mailextractors.Body;
 import app.mailextractors.ContentType;
-import app.mailextractors.MimeAttachment;
+import app.mailextractors.EmailAttachment;
 import app.configuration.jackson.JacksonConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,10 +23,10 @@ import static org.assertj.core.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @Import(JacksonConfiguration.class)
 @JsonTest
-public class MimeMessageMetaJsonTest {
+public class EmailMessageJsonTest {
 
     @Autowired
-    private JacksonTester<MimeMessageMeta> jsonTester;
+    private JacksonTester<EmailMessage> jsonTester;
 
     @Test
     public void testSerialize() throws Exception {
@@ -34,7 +34,7 @@ public class MimeMessageMetaJsonTest {
         Date sentDate = new GregorianCalendar(2017, Calendar.JANUARY, 1, 9, 30, 5).getTime();
 
         String body = "<html><body><h1>Hi there with attachments</h1></body></html>";
-        MimeMessageMeta message = MimeMessageMeta.builder()
+        EmailMessage message = EmailMessage.builder()
                 .id(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe582"))
                 .fromWho(Set.of("test@email.com"))
                 .replyTo(Set.of("test@email.com"))
@@ -46,18 +46,18 @@ public class MimeMessageMetaJsonTest {
                 .sentDate(sentDate)
                 .body(new Body(body, new ContentType(MediaType.TEXT_HTML_VALUE, "utf-8")))
                 .attachments(Set.of(
-                        new MimeAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe100"), "style", "inline",
+                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe100"), "style", "inline",
                                 new ContentType("text/css", "utf-8")),
-                        new MimeAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe101"), "house", "inline",
+                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe101"), "house", "inline",
                                 new ContentType(MediaType.IMAGE_JPEG_VALUE, null)),
-                        new MimeAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe102"), "notes.txt", "attachment",
+                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe102"), "notes.txt", "attachment",
                                 new ContentType(MediaType.TEXT_PLAIN_VALUE, "utf-8")),
-                        new MimeAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe103"), "sales.pdf", "attachment",
+                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe103"), "sales.pdf", "attachment",
                                 new ContentType(MediaType.APPLICATION_PDF_VALUE, null))
                 ))
                 .create();
 
-        JsonContent<MimeMessageMeta> json = jsonTester.write(message);
-        assertThat(json).isEqualToJson(new ClassPathResource("MimeMessageMetaExpectedJson.json"), JSONCompareMode.NON_EXTENSIBLE);
+        JsonContent<EmailMessage> json = jsonTester.write(message);
+        assertThat(json).isEqualToJson(new ClassPathResource("EmailMessageExpectedJson.json"), JSONCompareMode.NON_EXTENSIBLE);
     }
 }

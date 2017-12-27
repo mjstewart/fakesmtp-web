@@ -1,18 +1,13 @@
 package app.mailextractors;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.util.comparator.Comparators;
-
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class MimeAttachment {
+public class EmailAttachment {
     @Id
     private UUID id;
     
@@ -20,13 +15,13 @@ public class MimeAttachment {
     private String disposition;
     private ContentType contentType;
 
-    public MimeAttachment() {}
+    public EmailAttachment() {}
 
-    public MimeAttachment(String fileName, String disposition, ContentType contentType) {
+    public EmailAttachment(String fileName, String disposition, ContentType contentType) {
         this(UUID.randomUUID(), fileName, disposition, contentType);
     }
     
-    public MimeAttachment(UUID id, String fileName, String disposition, ContentType contentType) {
+    public EmailAttachment(UUID id, String fileName, String disposition, ContentType contentType) {
         this.id = id;
         this.fileName = fileName;
         this.disposition = disposition;
@@ -53,7 +48,7 @@ public class MimeAttachment {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MimeAttachment that = (MimeAttachment) o;
+        EmailAttachment that = (EmailAttachment) o;
         return Objects.equals(id, that.id);
     }
 
@@ -69,24 +64,24 @@ public class MimeAttachment {
      * <p>By fileName, disposition, contentType.mediaType then contentType.charset.
      * nulls are stored last.</p>
      */
-    public static Comparator<MimeAttachment> excludeIdComparator() {
+    public static Comparator<EmailAttachment> excludeIdComparator() {
         Comparator<String> compareSafeString = Comparator.nullsLast(String::compareTo);
 
-        Comparator<MimeAttachment> contentTypeComparator =
-                Comparator.comparing(MimeAttachment::getContentType, Comparator.nullsLast(
+        Comparator<EmailAttachment> contentTypeComparator =
+                Comparator.comparing(EmailAttachment::getContentType, Comparator.nullsLast(
                         Comparator.comparing(ContentType::getMediaType, compareSafeString)
                                 .thenComparing(ContentType::getCharset, compareSafeString)
                 ));
 
         return Comparator
-                .comparing(MimeAttachment::getFileName, compareSafeString)
-                .thenComparing(MimeAttachment::getDisposition, compareSafeString)
+                .comparing(EmailAttachment::getFileName, compareSafeString)
+                .thenComparing(EmailAttachment::getDisposition, compareSafeString)
                 .thenComparing(contentTypeComparator);
     }
 
     @Override
     public String toString() {
-        return "MimeAttachment{" +
+        return "EmailAttachment{" +
                 "id=" + id +
                 ", fileName='" + fileName + '\'' +
                 ", disposition='" + disposition + '\'' +

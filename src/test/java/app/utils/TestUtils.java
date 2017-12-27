@@ -1,7 +1,7 @@
 package app.utils;
 
-import app.domain.MimeMessageMeta;
-import app.mailextractors.MimeMetaExtractor;
+import app.domain.EmailMessage;
+import app.mailextractors.EmailExtractor;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import javax.mail.MessagingException;
@@ -10,7 +10,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class TestUtils {
-    public static MimeMessageMeta createTestEmailOne() throws MessagingException {
+    public static EmailMessage createTestEmailOne() throws MessagingException {
         MimeMessage message = new MimeMessage(Session.getDefaultInstance(new Properties()));
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setFrom("test100@email.com");
@@ -18,10 +18,10 @@ public class TestUtils {
         helper.setSubject("test 1 email subject");
         helper.setCc("person3@email.com");
         helper.setText("some body text", false);
-        return MimeMetaExtractor.parse(message);
+        return EmailExtractor.parse(message);
     }
 
-    public static MimeMessageMeta createTestEmailTwo() throws MessagingException {
+    public static EmailMessage createTestEmailTwo() throws MessagingException {
         MimeMessage message = new MimeMessage(Session.getDefaultInstance(new Properties()));
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setFrom("test200@email.com");
@@ -30,6 +30,6 @@ public class TestUtils {
         helper.setCc("person12@email.com");
         helper.setBcc("person33@email.com");
         helper.setText("some body text for another email", false);
-        return MimeMetaExtractor.parse(message);
+        return EmailExtractor.parse(message);
     }
 }

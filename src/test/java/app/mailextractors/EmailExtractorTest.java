@@ -1,9 +1,9 @@
 package app.mailextractors;
 
+import app.domain.EmailMessage;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import app.domain.MimeMessageMeta;
 
 import javax.mail.Address;
 import javax.mail.Message;
@@ -18,7 +18,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class MimeMetaExtractorTest {
+public class EmailExtractorTest {
 
     private final Session session = Session.getDefaultInstance(new Properties());
 
@@ -108,7 +108,7 @@ public class MimeMetaExtractorTest {
         MimeMessage message = new MimeMessage(session, input);
         input.close();
 
-        Optional<BodyAttachment> result = MimeMetaExtractor.getAllAttachments(message);
+        Optional<BodyAttachment> result = EmailExtractor.getAllAttachments(message);
 
         assertThat(result).isNotNull();
         assertThat(result.isPresent()).isTrue();
@@ -120,18 +120,18 @@ public class MimeMetaExtractorTest {
 
         assertThat(result.get().getAttachments()).isNotNull();
         assertThat(result.get().getAttachments())
-                .usingElementComparator(MimeAttachment.excludeIdComparator())
+                .usingElementComparator(EmailAttachment.excludeIdComparator())
                 .containsExactlyInAnyOrder(
-                        new MimeAttachment("house", INLINE,
+                        new EmailAttachment("house", INLINE,
                                 new ContentType(MediaType.IMAGE_PNG_VALUE, null)),
 
-                        new MimeAttachment("styles", INLINE,
+                        new EmailAttachment("styles", INLINE,
                                 new ContentType("text/css", "us-ascii")),
 
-                        new MimeAttachment("list.txt", ATTACHMENT,
+                        new EmailAttachment("list.txt", ATTACHMENT,
                                 new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii")),
 
-                        new MimeAttachment("notes.txt", ATTACHMENT,
+                        new EmailAttachment("notes.txt", ATTACHMENT,
                                 new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii"))
                 );
     }
@@ -143,7 +143,7 @@ public class MimeMetaExtractorTest {
         MimeMessage message = new MimeMessage(session, input);
         input.close();
 
-        Optional<BodyAttachment> result = MimeMetaExtractor.getAllAttachments(message);
+        Optional<BodyAttachment> result = EmailExtractor.getAllAttachments(message);
 
         assertThat(result).isNotNull();
         assertThat(result.isPresent()).isTrue();
@@ -164,7 +164,7 @@ public class MimeMetaExtractorTest {
         input.close();
 
         // Expect all values that were used in createTestMessageWithAttachments.
-        MimeMessageMeta meta = MimeMetaExtractor.parse(message);
+        EmailMessage meta = EmailExtractor.parse(message);
         assertThat(meta.getId()).isNotNull();
         assertThat(meta.getFromWho()).containsExactlyInAnyOrder("test@email.com");
         assertThat(meta.getBody()).isEqualTo(new Body(
@@ -179,18 +179,18 @@ public class MimeMetaExtractorTest {
         assertThat(meta.getDescription()).isEqualTo("a message description");
         assertThat(meta.getAttachments()).isNotNull();
         assertThat(meta.getAttachments())
-                .usingElementComparator(MimeAttachment.excludeIdComparator())
+                .usingElementComparator(EmailAttachment.excludeIdComparator())
                 .containsExactlyInAnyOrder(
-                new MimeAttachment("house", INLINE,
+                new EmailAttachment("house", INLINE,
                         new ContentType(MediaType.IMAGE_PNG_VALUE, null)),
 
-                new MimeAttachment("styles", INLINE,
+                new EmailAttachment("styles", INLINE,
                         new ContentType("text/css", "us-ascii")),
 
-                new MimeAttachment("list.txt", ATTACHMENT,
+                new EmailAttachment("list.txt", ATTACHMENT,
                         new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii")),
 
-                new MimeAttachment("notes.txt", ATTACHMENT,
+                new EmailAttachment("notes.txt", ATTACHMENT,
                         new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii"))
         );
     }
@@ -203,7 +203,7 @@ public class MimeMetaExtractorTest {
         input.close();
 
         // Expect all values that were used in createTestMessageWithPlainTextBodyAndNoAttachments.
-        MimeMessageMeta meta = MimeMetaExtractor.parse(message);
+        EmailMessage meta = EmailExtractor.parse(message);
         assertThat(meta.getId()).isNotNull();
         assertThat(meta.getFromWho()).containsExactlyInAnyOrder("test@email.com");
         assertThat(meta.getBody()).isEqualTo(new Body(
@@ -221,7 +221,7 @@ public class MimeMetaExtractorTest {
 
     @Test
     public void parse_MimeMetaMessage_HasAllExpectedDefaultValues() {
-        MimeMessageMeta meta = MimeMessageMeta.builder().create();
+        EmailMessage meta = EmailMessage.builder().create();
 
         assertThat(meta.getId()).isNotNull();
         assertThat(meta.getSubject()).isNull();
@@ -245,7 +245,7 @@ public class MimeMetaExtractorTest {
         input.close();
 
         // Expect all values that are in fakeSMTP-generated-no-attachments.eml
-        MimeMessageMeta meta = MimeMetaExtractor.parse(message);
+        EmailMessage meta = EmailExtractor.parse(message);
 
         assertThat(meta.getBody()).isEqualTo(new Body(
                 "<!DOCTYPE html>\n" +
@@ -292,7 +292,7 @@ public class MimeMetaExtractorTest {
         input.close();
 
         // Expect all values that are in fakeSMTP-generated-no-attachments.eml
-        MimeMessageMeta meta = MimeMetaExtractor.parse(message);
+        EmailMessage meta = EmailExtractor.parse(message);
 
         assertThat(meta.getBody()).isEqualTo(new Body(
                 "<!DOCTYPE html>\n" +
@@ -329,18 +329,18 @@ public class MimeMetaExtractorTest {
         assertThat(meta.getSentDate()).isNotNull();
         assertThat(meta.getDescription()).isNull();
         assertThat(meta.getAttachments())
-                .usingElementComparator(MimeAttachment.excludeIdComparator())
+                .usingElementComparator(EmailAttachment.excludeIdComparator())
                 .containsExactlyInAnyOrder(
-                new MimeAttachment("styles", INLINE,
+                new EmailAttachment("styles", INLINE,
                         new ContentType("text/css", "us-ascii")),
 
-                new MimeAttachment("dummy", INLINE,
+                new EmailAttachment("dummy", INLINE,
                         new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii")),
 
-                new MimeAttachment("styles.css", ATTACHMENT,
+                new EmailAttachment("styles.css", ATTACHMENT,
                         new ContentType("text/css", "us-ascii")),
 
-                new MimeAttachment("notes.txt", ATTACHMENT,
+                new EmailAttachment("notes.txt", ATTACHMENT,
                         new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii"))
         );
     }
@@ -348,46 +348,46 @@ public class MimeMetaExtractorTest {
     @Test
     public void isNotEmpty_IsTrueWhenNotEmpty() {
         Object[] numbers = {1, 2, 3};
-        assertThat(MimeMetaExtractor.isNotEmpty(numbers)).isTrue();
+        assertThat(EmailExtractor.isNotEmpty(numbers)).isTrue();
     }
 
     @Test
     public void isNotEmpty_IsFalseWhenEmpty() {
         Object[] numbers = {};
-        assertThat(MimeMetaExtractor.isNotEmpty(numbers)).isFalse();
+        assertThat(EmailExtractor.isNotEmpty(numbers)).isFalse();
     }
 
     @Test
     public void removeAngleBrackets() {
-        assertThat(MimeMetaExtractor.removeAngleBrackets("")).isEqualTo("");
-        assertThat(MimeMetaExtractor.removeAngleBrackets("hello")).isEqualTo("hello");
-        assertThat(MimeMetaExtractor.removeAngleBrackets("<hello>")).isEqualTo("hello");
+        assertThat(EmailExtractor.removeAngleBrackets("")).isEqualTo("");
+        assertThat(EmailExtractor.removeAngleBrackets("hello")).isEqualTo("hello");
+        assertThat(EmailExtractor.removeAngleBrackets("<hello>")).isEqualTo("hello");
     }
 
     @Test
     public void parseContentType() {
-        assertThat(MimeMetaExtractor.parseContentType("text/plain"))
+        assertThat(EmailExtractor.parseContentType("text/plain"))
                 .isEqualTo(new ContentType("text/plain"));
 
-        assertThat(MimeMetaExtractor.parseContentType("text/plain; charset=us-ascii"))
+        assertThat(EmailExtractor.parseContentType("text/plain; charset=us-ascii"))
                 .isEqualTo(new ContentType("text/plain", "us-ascii"));
 
-        assertThat(MimeMetaExtractor.parseContentType("text/plain; charset=UTF-8; name=hello; type=important"))
+        assertThat(EmailExtractor.parseContentType("text/plain; charset=UTF-8; name=hello; type=important"))
                 .isEqualTo(new ContentType("text/plain", "UTF-8"));
 
-        assertThat(MimeMetaExtractor.parseContentType("text/plain; blah=us-ascii; name=hello; type=important"))
+        assertThat(EmailExtractor.parseContentType("text/plain; blah=us-ascii; name=hello; type=important"))
                 .isEqualTo(new ContentType("text/plain"));
 
         // The method shouldn't worry about the media type being valid or not.
-        assertThat(MimeMetaExtractor.parseContentType("blah"))
+        assertThat(EmailExtractor.parseContentType("blah"))
                 .isEqualTo(new ContentType("blah"));
 
-        assertThat(MimeMetaExtractor.parseContentType("")).isNull();
+        assertThat(EmailExtractor.parseContentType("")).isNull();
     }
 
     @Test
     public void toList() throws AddressException {
         Address[] addresses = {new InternetAddress("me@email.com"), new InternetAddress("you@email.com")};
-        assertThat(MimeMetaExtractor.toSet(addresses)).containsExactlyInAnyOrder("me@email.com", "you@email.com");
+        assertThat(EmailExtractor.toSet(addresses)).containsExactlyInAnyOrder("me@email.com", "you@email.com");
     }
 }
