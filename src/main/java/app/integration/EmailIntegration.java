@@ -73,7 +73,6 @@ public class EmailIntegration {
     public SseEmitter emailStream(@PathVariable("id") String id) {
         SseEmitter sseEmitter = new SseEmitter(NO_TIMEOUT);
         emitters.put(id, sseEmitter);
-        System.out.println(emitters);
         return sseEmitter;
     }
 
@@ -115,15 +114,15 @@ public class EmailIntegration {
      * sends the transformed file into the {@code emailChannel} for consumers to process.
      */
     @Bean
-    public IntegrationFlow incomingEmailsFlow(@Value("${input-directory}") File in,
-                                              @Value("${poll-rate-seconds}") long pollRateSeconds) {
+    public IntegrationFlow incomingEmailsFlow(@Value("${email.input.dir}") File in,
+                                              @Value("${email.input.dir.poll.rate.seconds}") long pollRateSeconds) {
         return IntegrationFlows.from(Files.inboundAdapter(in)
                 .autoCreateDirectory(false)
                 .preventDuplicates(true)
                 .patternFilter("*.eml"), c -> c.poller(Pollers.fixedRate(pollRateSeconds)))
                 .transform(File.class, emailFileTransformer())
                 .channel(emailChannel())
-//                .log(LoggingHandler.Level.INFO, "test.emailChannel", m -> "emailChannel: " + m.getPayload())
+                .log(LoggingHandler.Level.INFO, "test.emailChannel", m -> "emailChannel: " + m.getPayload())
                 .get();
     }
 

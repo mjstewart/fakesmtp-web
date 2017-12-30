@@ -148,7 +148,7 @@ public class EmailExtractor {
 
     /**
      * Extracts and maps header into a domain type.
-     * <p>{@code Content-Type : text/plain; charset=us-ascii}
+     * <p>{@code Content-Type : text/plain; charset=us-ascii}. Can return null.
      * <p>
      * <code>[text/plain; charset=us-ascii]</code> is in index 0.
      */
@@ -167,6 +167,8 @@ public class EmailExtractor {
      *     "text/plain; charset=us-ascii; ..." -> EmailAttachment.ContentType(mediaType, charset)
      *     "text/plain" -> EmailAttachment.ContentType(mediaType, charset=null)
      * </pre>
+     *
+     * Can return null.
      */
     public static ContentType parseContentType(String header) {
         String[] tokens = header.split(";");
@@ -184,7 +186,7 @@ public class EmailExtractor {
 
     /**
      * If the {@code Part} is {@code inline}, the filename is the {@code Content-ID} header, otherwise its the
-     * attachments filename.
+     * attachments filename. Can return null if no content type is found.
      */
     public static String getFileName(Part part) {
         return Try.of(part::getFileName)
