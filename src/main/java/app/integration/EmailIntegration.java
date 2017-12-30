@@ -123,7 +123,7 @@ public class EmailIntegration {
                 .patternFilter("*.eml"), c -> c.poller(Pollers.fixedRate(pollRateSeconds)))
                 .transform(File.class, emailFileTransformer())
                 .channel(emailChannel())
-                .log(LoggingHandler.Level.INFO, "test.emailChannel", m -> "emailChannel: " + m.getPayload())
+//                .log(LoggingHandler.Level.INFO, "test.emailChannel", m -> "emailChannel: " + m.getPayload())
                 .get();
     }
 

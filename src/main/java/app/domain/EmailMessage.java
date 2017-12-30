@@ -157,16 +157,16 @@ public class EmailMessage {
     public static class Builder {
         private UUID id = UUID.randomUUID();
         private String subject;
-        private Set<String> fromWho = Set.of();
-        private Set<String> replyTo = Set.of();
+        private Set<String> fromWho = new HashSet<>();
+        private Set<String> replyTo = new HashSet<>();
         private Body body;
         private Date receivedDate;
         private Date sentDate;
         private String description;
-        private Set<String> toRecipients = Set.of();
-        private Set<String> ccRecipients = Set.of();
-        private Set<String> bccRecipients = Set.of();
-        private Set<EmailAttachment> attachments = Set.of();
+        private Set<String> toRecipients = new HashSet<>();
+        private Set<String> ccRecipients = new HashSet<>();
+        private Set<String> bccRecipients = new HashSet<>();
+        private Set<EmailAttachment> attachments = new HashSet<>();
 
         public Builder id(UUID id) {
             this.id = id;

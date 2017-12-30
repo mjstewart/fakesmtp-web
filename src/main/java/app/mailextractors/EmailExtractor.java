@@ -18,7 +18,7 @@ public class EmailExtractor {
         Optional<BodyAttachment> bodyAttachment = getAllAttachments(message);
         Body body = bodyAttachment.flatMap(BodyAttachment::getBody).orElse(null);
         Set<EmailAttachment> attachments = new HashSet<>(
-                bodyAttachment.map(BodyAttachment::getAttachments).orElse(List.of())
+                bodyAttachment.map(BodyAttachment::getAttachments).orElse(new ArrayList<>())
         );
 
         return EmailMessage.builder()
@@ -41,11 +41,12 @@ public class EmailExtractor {
 
 
     public static Set<String> toSet(Address[] addresses) {
-        return addresses == null ? Set.of() : Arrays.stream(addresses).map(Address::toString).collect(Collectors.toSet());
+        return addresses == null ? new HashSet<>() :
+                Arrays.stream(addresses).map(Address::toString).collect(Collectors.toSet());
     }
 
     public static Set<String> addressExtractor(CheckedFunction0<Address[]> f) {
-        return Try.of(f).map(EmailExtractor::toSet).getOrElseGet(t -> Set.of());
+        return Try.of(f).map(EmailExtractor::toSet).getOrElseGet(t -> new HashSet<>());
     }
 
     public static String stringExtractor(CheckedFunction0<String> f) {
@@ -82,9 +83,9 @@ public class EmailExtractor {
         } else if (bodyPart == 0) {
             if (part.isMimeType("text/plain") || part.isMimeType("text/html")) {
                 String body = (String) part.getContent();
-                return new Tuple2<>(new Body(body, parseContentType(part.getContentType())), List.of());
+                return new Tuple2<>(new Body(body, parseContentType(part.getContentType())), new ArrayList<>());
             }
-            return new Tuple2<>(new Body("mime type not supported"), List.of());
+            return new Tuple2<>(new Body("mime type not supported"), new ArrayList<>());
         } else {
             // All body parts >= 1 are inline disposition types.
             EmailAttachment messageAttachment = new EmailAttachment(
@@ -92,7 +93,7 @@ public class EmailExtractor {
                     stringExtractor(part::getDisposition),
                     createContentType(part)
             );
-            return new Tuple2<>(null, List.of(messageAttachment));
+            return new Tuple2<>(null, Arrays.asList(messageAttachment));
         }
     }
 
@@ -127,7 +128,7 @@ public class EmailExtractor {
                     stringExtractor(part::getDisposition),
                     createContentType(part)
             );
-            return new Tuple2<>(null, List.of(messageAttachment));
+            return new Tuple2<>(null, Arrays.asList(messageAttachment));
         }
     }
 

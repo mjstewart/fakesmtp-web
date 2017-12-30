@@ -36,16 +36,16 @@ public class EmailMessageJsonTest {
         String body = "<html><body><h1>Hi there with attachments</h1></body></html>";
         EmailMessage message = EmailMessage.builder()
                 .id(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe582"))
-                .fromWho(Set.of("test@email.com"))
-                .replyTo(Set.of("test@email.com"))
+                .fromWho(new HashSet<>(Arrays.asList("test@email.com")))
+                .replyTo(new HashSet<>(Arrays.asList("test@email.com")))
                 .subject("a test email subject")
-                .toRecipients(Set.of("person1@email.com", "person2@email.com"))
-                .ccRecipients(Set.of("person3@email.com", "person4@email.com"))
-                .bccRecipients(Set.of())
+                .toRecipients(new HashSet<>(Arrays.asList("person1@email.com", "person2@email.com")))
+                .ccRecipients(new HashSet<>(Arrays.asList("person3@email.com", "person4@email.com")))
+                .bccRecipients(new HashSet<>())
                 .description("a test email description")
                 .sentDate(sentDate)
                 .body(new Body(body, new ContentType(MediaType.TEXT_HTML_VALUE, "utf-8")))
-                .attachments(Set.of(
+                .attachments(new HashSet<>(Arrays.asList(
                         new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe100"), "style", "inline",
                                 new ContentType("text/css", "utf-8")),
                         new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe101"), "house", "inline",
@@ -54,7 +54,7 @@ public class EmailMessageJsonTest {
                                 new ContentType(MediaType.TEXT_PLAIN_VALUE, "utf-8")),
                         new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe103"), "sales.pdf", "attachment",
                                 new ContentType(MediaType.APPLICATION_PDF_VALUE, null))
-                ))
+                )))
                 .create();
 
         JsonContent<EmailMessage> json = jsonTester.write(message);
