@@ -1,18 +1,16 @@
 package app.web;
 
 import app.domain.EmailMessage;
-import io.vavr.CheckedFunction0;
-import io.vavr.control.Try;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
