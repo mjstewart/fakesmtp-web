@@ -229,7 +229,7 @@ public class EmailExtractorTest {
         assertThat(meta.getReplyTo()).isEmpty();
         assertThat(meta.getBody()).isNull();
         assertThat(meta.getReceivedDate()).isNull();
-        assertThat(meta.getSentDate()).isNull();
+        assertThat(meta.getSentDate()).isNotNull();
         assertThat(meta.getDescription()).isNull();
         assertThat(meta.getToRecipients()).isEmpty();
         assertThat(meta.getCcRecipients()).isEmpty();

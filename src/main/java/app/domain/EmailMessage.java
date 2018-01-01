@@ -3,6 +3,7 @@ package app.domain;
 import app.mailextractors.EmailAttachment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import app.mailextractors.Body;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.*;
@@ -22,6 +23,7 @@ public class EmailMessage {
     @Id
     private UUID id;
 
+    @Nullable
     private String subject;
 
     // cant use 'from' as its a reserved sql keyword
@@ -33,8 +35,10 @@ public class EmailMessage {
     private Set<String> replyTo;
 
     private Body body;
+
     private Date receivedDate;
     private Date sentDate;
+
     private String description;
 
     @ElementCollection
@@ -74,7 +78,8 @@ public class EmailMessage {
     public UUID getId() {
         return id;
     }
-    
+
+    @Nullable
     public String getSubject() {
         return subject;
     }
@@ -91,14 +96,20 @@ public class EmailMessage {
         return body;
     }
 
+    @Nullable
     public Date getReceivedDate() {
         return receivedDate;
     }
 
+    /**
+     * The Date the email was sent by the mail client, otherwise the current Date that this EmailMessage
+     * was created at which is near enough the mail client send time.
+     */
     public Date getSentDate() {
         return sentDate;
     }
 
+    @Nullable
     public String getDescription() {
         return description;
     }
@@ -230,7 +241,7 @@ public class EmailMessage {
 
         public EmailMessage create() {
             return new EmailMessage(id, subject, fromWho, replyTo, body,
-                    receivedDate, sentDate, description,
+                    receivedDate, sentDate == null ? new Date() : sentDate, description,
                     toRecipients, ccRecipients, bccRecipients, attachments);
         }
     }

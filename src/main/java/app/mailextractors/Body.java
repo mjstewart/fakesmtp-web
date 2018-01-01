@@ -1,5 +1,7 @@
 package app.mailextractors;
 
+import org.springframework.lang.Nullable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
@@ -27,6 +29,7 @@ public class Body {
         return content;
     }
 
+    @Nullable
     public ContentType getContentType() {
         return contentType;
     }

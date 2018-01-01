@@ -1,5 +1,7 @@
 package app.mailextractors;
 
+import org.springframework.lang.Nullable;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Comparator;
@@ -32,14 +34,17 @@ public class EmailAttachment {
         return id;
     }
 
+    @Nullable
     public String getFileName() {
         return fileName;
     }
 
+    @Nullable
     public String getDisposition() {
         return disposition;
     }
 
+    @Nullable
     public ContentType getContentType() {
         return contentType;
     }

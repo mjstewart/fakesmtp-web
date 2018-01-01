@@ -1,5 +1,7 @@
 package app.mailextractors;
 
+import org.springframework.lang.Nullable;
+
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
@@ -19,10 +21,12 @@ public class ContentType {
         this.charset = charset;
     }
 
+    @Nullable
     public String getMediaType() {
         return mediaType;
     }
 
+    @Nullable
     public String getCharset() {
         return charset;
     }
