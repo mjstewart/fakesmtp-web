@@ -178,6 +178,7 @@ public class EmailExtractorTest {
         assertThat(meta.getSentDate()).isNotNull();
         assertThat(meta.getDescription()).isEqualTo("a message description");
         assertThat(meta.getAttachments()).isNotNull();
+        assertThat(meta.isRead()).isFalse();
         assertThat(meta.getAttachments())
                 .usingElementComparator(EmailAttachment.excludeIdComparator())
                 .containsExactlyInAnyOrder(
@@ -217,6 +218,7 @@ public class EmailExtractorTest {
         assertThat(meta.getSentDate()).isNotNull();
         assertThat(meta.getDescription()).isNull();
         assertThat(meta.getAttachments()).isEmpty();
+        assertThat(meta.isRead()).isFalse();
     }
 
     @Test
@@ -235,6 +237,7 @@ public class EmailExtractorTest {
         assertThat(meta.getCcRecipients()).isEmpty();
         assertThat(meta.getBccRecipients()).isEmpty();
         assertThat(meta.getAttachments()).isEmpty();
+        assertThat(meta.isRead()).isFalse();
     }
 
     @Test
@@ -282,6 +285,7 @@ public class EmailExtractorTest {
         assertThat(meta.getSentDate()).isNotNull();
         assertThat(meta.getDescription()).isNull();
         assertThat(meta.getAttachments()).isEmpty();
+        assertThat(meta.isRead()).isTrue();
     }
 
     @Test
@@ -328,6 +332,7 @@ public class EmailExtractorTest {
         assertThat(meta.getSubject()).isEqualTo("Warehouse manager - Activate new account");
         assertThat(meta.getSentDate()).isNotNull();
         assertThat(meta.getDescription()).isNull();
+        assertThat(meta.isRead()).isTrue();
         assertThat(meta.getAttachments())
                 .usingElementComparator(EmailAttachment.excludeIdComparator())
                 .containsExactlyInAnyOrder(

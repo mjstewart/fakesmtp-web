@@ -63,5 +63,6 @@
         "charset": null
       }
     }
-  ]
+  ],
+  "read": false
 }

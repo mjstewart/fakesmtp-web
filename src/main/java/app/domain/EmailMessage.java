@@ -53,6 +53,8 @@ public class EmailMessage {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EmailAttachment> attachments;
 
+    private boolean read;
+
     private EmailMessage() {
     }
 
@@ -60,7 +62,7 @@ public class EmailMessage {
                          Set<String> replyTo, Body body, Date receivedDate, Date sentDate,
                          String description, Set<String> toRecipients,
                          Set<String> ccRecipients, Set<String> bccRecipients,
-                         Set<EmailAttachment> attachments) {
+                         Set<EmailAttachment> attachments, boolean read) {
         this.id = id;
         this.subject = subject;
         this.fromWho = fromWho;
@@ -73,6 +75,7 @@ public class EmailMessage {
         this.ccRecipients = ccRecipients;
         this.bccRecipients = bccRecipients;
         this.attachments = attachments;
+        this.read = read;
     }
 
     public UUID getId() {
@@ -130,6 +133,23 @@ public class EmailMessage {
         return attachments;
     }
 
+    public boolean isRead() {
+        return read;
+    }
+
+    public boolean toggleRead() {
+        read = !read;
+        return read;
+    }
+
+    public void read() {
+        read = true;
+    }
+
+    public void unread() {
+        read = false;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -178,6 +198,7 @@ public class EmailMessage {
         private Set<String> ccRecipients = new HashSet<>();
         private Set<String> bccRecipients = new HashSet<>();
         private Set<EmailAttachment> attachments = new HashSet<>();
+        private boolean read = false;
 
         public Builder id(UUID id) {
             this.id = id;
@@ -239,10 +260,15 @@ public class EmailMessage {
             return this;
         }
 
+        public Builder read(boolean read) {
+            this.read = read;
+            return this;
+        }
+
         public EmailMessage create() {
             return new EmailMessage(id, subject, fromWho, replyTo, body,
                     receivedDate, sentDate == null ? new Date() : sentDate, description,
-                    toRecipients, ccRecipients, bccRecipients, attachments);
+                    toRecipients, ccRecipients, bccRecipients, attachments, read);
         }
     }
 }

@@ -18,10 +18,16 @@ The json structure of each email is outlined below where the /emails end point r
 a
 ### /emails
 
+Gets all the emails contained in `EMAIL_INPUT_DIR`
+
+A sort query parameter can order emails on any field / order. For example the below url will return all emails ordered 
+from newest to oldest.
+`http://localhost:8080/emails?sort=sendDate,desc`
+
         {
             "_embedded": {
                 "emails": [
-                    {
+                    {d
                         "id": String UUID,
                         "subject": String | null
                         "from": List String,
@@ -69,12 +75,6 @@ a
                 "profile": {
                     "href": "http://localhost:8080/profile/emails"
                 }
-            },
-            "page": {
-                "size": 20,
-                "totalElements": 1,
-                "totalPages": 1,
-                "number": 0
             }
         }
         
