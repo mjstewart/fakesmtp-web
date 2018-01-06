@@ -13,11 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.mvc.TypeReferences;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -97,12 +96,28 @@ public class EmailMessageRepositoryIT {
         repository.save(firstEmail);
         repository.save(secondEmail);
 
-        ResponseEntity<PagedResources<EmailMessage>> result = restTemplate.exchange("/emails?sort=sentDate,desc",
+        ResponseEntity<Resources<EmailMessage>> result = restTemplate.exchange("/emails?sort=sentDate,desc",
                 HttpMethod.GET, null,
-                new TypeReferences.PagedResourcesType<EmailMessage>() {
+                new TypeReferences.ResourcesType<EmailMessage>() {
                 });
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getContent()).containsExactlyInAnyOrder(firstEmail, secondEmail);
+    }
+
+    @Test
+    public void rest_DeleteAll_Returns204NoContentWhenSuccessful() throws Exception {
+        EmailMessage firstEmail = TestUtils.createTestEmailOne();
+        EmailMessage secondEmail = TestUtils.createTestEmailTwo();
+        repository.save(firstEmail);
+        repository.save(secondEmail);
+
+        ResponseEntity<Resource<Void>> result = restTemplate.exchange("/emails/actions",
+                HttpMethod.DELETE, null,
+                new TypeReferences.ResourceType<Void>() {
+                });
+
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        assertThat(repository.findAll()).isEmpty();
     }
 }

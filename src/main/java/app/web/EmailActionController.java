@@ -65,6 +65,12 @@ public class EmailActionController {
         return new ResponseEntity<>(emailsToResponseBody(updatedEmails), HttpStatus.CREATED);
     }
 
+    @DeleteMapping
+    public ResponseEntity<Void> handleDeleteAll() {
+        repository.deleteAll();
+        return ResponseEntity.noContent().build();
+    }
+
     private List<Map<String, Object>> emailsToResponseBody(List<EmailMessage> emails) {
         return emails.stream()
                 .map(this::emailToResponseBody)
