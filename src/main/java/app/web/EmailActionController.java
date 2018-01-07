@@ -26,25 +26,8 @@ public class EmailActionController {
         this.repository = repository;
 
         handlers = new HashMap<>();
-        handlers.put(ActionType.TOGGLE_READ, EmailMessage::toggleRead);
         handlers.put(ActionType.READ_ALL, EmailMessage::read);
         handlers.put(ActionType.UNREAD_ALL, EmailMessage::unread);
-    }
-
-    @PostMapping(value = "/{id}")
-    public ResponseEntity<?> handleSingleEmailAction(@PathVariable("id") UUID id, @RequestBody ActionRequest requestBody) {
-        if (requestBody.getAction() != ActionType.TOGGLE_READ) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Optional<EmailMessage> email = repository.findById(id);
-        if (!email.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        email.get().toggleRead();
-        repository.save(email.get());
-        return new ResponseEntity<>(emailToResponseBody(email.get()), HttpStatus.CREATED);
     }
 
     @PostMapping
@@ -65,6 +48,10 @@ public class EmailActionController {
         return new ResponseEntity<>(emailsToResponseBody(updatedEmails), HttpStatus.CREATED);
     }
 
+    /**
+     * Spring data rest (SDR) doesn't allow delete on collection resources. It also has to fall under a different URI
+     * otherwise it overrides SDR
+     */
     @DeleteMapping
     public ResponseEntity<Void> handleDeleteAll() {
         repository.deleteAll();

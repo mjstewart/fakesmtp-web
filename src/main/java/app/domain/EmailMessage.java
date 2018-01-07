@@ -137,11 +137,6 @@ public class EmailMessage {
         return read;
     }
 
-    public boolean toggleRead() {
-        read = !read;
-        return read;
-    }
-
     public void read() {
         read = true;
     }

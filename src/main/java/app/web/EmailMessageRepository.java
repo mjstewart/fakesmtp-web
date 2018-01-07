@@ -15,13 +15,5 @@ public interface EmailMessageRepository extends CrudRepository<EmailMessage, UUI
 
     @RestResource(path = "emails", rel = "emails")
     List<EmailMessage> findAll(Sort sort);
-
-    @RestResource(exported = false)
-    @Override
-    <S extends EmailMessage> S save(S entity);
-
-    @RestResource(exported = false)
-    @Override
-    <S extends EmailMessage> Iterable<S> saveAll(Iterable<S> entities);
 }
 
