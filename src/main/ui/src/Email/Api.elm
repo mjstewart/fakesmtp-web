@@ -15,7 +15,7 @@ getEmails =
     let
         request : Http.Request (List Email)
         request =
-            Http.get "http://localhost:8080/emails?sort=sentDate,desc" EmailDecoders.decodeEmails
+            Http.get "http://localhost:8080/api/emails?sort=sentDate,desc" EmailDecoders.decodeEmails
     in
         Http.send Msgs.GetEmailsResult request
 
@@ -25,7 +25,7 @@ requestToggleEmailRead email =
     let
         url : AppTypes.Url
         url =
-            appendEmailIdToUrl (AppTypes.Url "http://localhost:8080/emails") email.id
+            appendEmailIdToUrl (AppTypes.Url "http://localhost:8080/api/emails") email.id
 
         body : Http.Body
         body =
@@ -42,7 +42,7 @@ requestReadAllEmails : Cmd Msg
 requestReadAllEmails =
     let
         url =
-            "http://localhost:8080/emails/actions"
+            "http://localhost:8080/api/emails/actions"
 
         body : Http.Body
         body =
@@ -59,7 +59,7 @@ requestUnreadAllEmails : Cmd Msg
 requestUnreadAllEmails =
     let
         url =
-            "http://localhost:8080/emails/actions"
+            "http://localhost:8080/api/emails/actions"
 
         body : Http.Body
         body =
@@ -77,7 +77,7 @@ requestDeleteEmail id =
     let
         url : AppTypes.Url
         url =
-            appendEmailIdToUrl (AppTypes.Url "http://localhost:8080/emails") id
+            appendEmailIdToUrl (AppTypes.Url "http://localhost:8080/api/emails") id
 
         request : Http.Request EmailId
         request =
@@ -91,7 +91,7 @@ requestDeleteAllEmails =
     let
         url : AppTypes.Url
         url =
-            AppTypes.Url "http://localhost:8080/emails/actions"
+            AppTypes.Url "http://localhost:8080/api/emails/actions"
 
         request : Http.Request ()
         request =

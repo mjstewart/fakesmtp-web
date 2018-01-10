@@ -28,7 +28,7 @@ app.ports.showErrorModal.subscribe(function(apiErrorModal) {
 app.ports.subscribeToEmailStream.subscribe(function(appIdentifier) {
     var CLOSED = 2;
 
-    var source = new EventSource("http://localhost:8080/stream/emails/" + appIdentifier);
+    var source = new EventSource("http://localhost:8080/api/stream/emails/" + appIdentifier);
 
     if (source.readyState === CLOSED) {
         app.ports.emailStreamClosed.send(null);

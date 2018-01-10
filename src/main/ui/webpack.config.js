@@ -9,13 +9,16 @@ const BUILD_DIR = path.resolve('../resources/static/ui');
 const INDEX_HTML_PATH = path.resolve('../resources/templates/index.html');
 
 module.exports = function (env) {
+    // production build links in index.html need to resolve to BUILD_DIR  
+    const publicPath = (env === 'prod') ? '/ui/' : '/';
+
     const config = {
         entry: {
             app: ['./src/index.js']
         },
         output: {
             filename: 'bundle.js',
-            publicPath: '/ui/',
+            publicPath: publicPath,
             path: BUILD_DIR
         },
         module: {
@@ -46,7 +49,7 @@ module.exports = function (env) {
                         options: {
                             limit: 10000,
                             outputPath: 'img/',
-                            publicPath: '/ui/',
+                            publicPath: publicPath,
                             name: 'img-[hash:6].[name].[ext]',
                         },
                     },
@@ -74,5 +77,22 @@ module.exports = function (env) {
             port: 9000
         },
     }
+
+    if (env === 'prod') {
+        // production index.html goes into spring boot templates folder.
+        config.plugins.push(new HtmlWebpackPlugin({
+            filename: INDEX_HTML_PATH,
+            template: path.resolve(__dirname, 'src', 'index.html'),
+            inject: 'body',
+        }));
+    } else {
+        // webpack dev server
+        config.plugins.push(new HtmlWebpackPlugin({
+            template: path.resolve(__dirname, 'src', 'index.html'),
+            inject: 'body',
+        }));
+    }
+
         return config;
     };
+    

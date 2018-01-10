@@ -100,7 +100,7 @@ public class EmailMessageRepositoryIT {
         repository.save(firstEmail);
         repository.save(secondEmail);
 
-        ResponseEntity<Resources<EmailMessage>> result = restTemplate.exchange("/emails?sort=sentDate,desc",
+        ResponseEntity<Resources<EmailMessage>> result = restTemplate.exchange("/api/emails?sort=sentDate,desc",
                 HttpMethod.GET, null,
                 new TypeReferences.ResourcesType<EmailMessage>() {
                 });
@@ -116,7 +116,7 @@ public class EmailMessageRepositoryIT {
         repository.save(firstEmail);
         repository.save(secondEmail);
 
-        ResponseEntity<Resource<Void>> result = restTemplate.exchange("/emails/actions",
+        ResponseEntity<Resource<Void>> result = restTemplate.exchange("/api/emails/actions",
                 HttpMethod.DELETE, null,
                 new TypeReferences.ResourceType<Void>() {
                 });
@@ -133,7 +133,7 @@ public class EmailMessageRepositoryIT {
         repository.save(secondEmail);
 
         // Uses Spring data rest endpoint on single resource
-        ResponseEntity<Resource<Void>> result = restTemplate.exchange("/emails/" + firstEmail.getId().toString(),
+        ResponseEntity<Resource<Void>> result = restTemplate.exchange("/api/emails/" + firstEmail.getId().toString(),
                 HttpMethod.DELETE, null,
                 new TypeReferences.ResourceType<Void>() {
                 });
@@ -160,7 +160,7 @@ public class EmailMessageRepositoryIT {
         body.put("read", false);
 
         // Uses Spring data rest endpoint on single resource
-        ResponseEntity<Resource<EmailMessage>> result = restTemplate.exchange("/emails/" + firstEmail.getId().toString(),
+        ResponseEntity<Resource<EmailMessage>> result = restTemplate.exchange("/api/emails/" + firstEmail.getId().toString(),
                 HttpMethod.PATCH, new HttpEntity<>(body),
                 new TypeReferences.ResourceType<EmailMessage>() {
                 });
@@ -182,7 +182,7 @@ public class EmailMessageRepositoryIT {
         body.put("read", false);
 
         // Uses Spring data rest endpoint on single resource
-        ResponseEntity<Resource<EmailMessage>> result = restTemplate.exchange("/emails/" + firstEmail.getId().toString(),
+        ResponseEntity<Resource<EmailMessage>> result = restTemplate.exchange("/api/emails/" + firstEmail.getId().toString(),
                 HttpMethod.PATCH, new HttpEntity<>(body),
                 new TypeReferences.ResourceType<EmailMessage>() {
                 });

@@ -6,7 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,8 +26,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+// Would normally be able to use @WebMvcTest if Spring Data Rest and @BasePathAwareController wasn't used.
 @RunWith(SpringRunner.class)
-@WebMvcTest(EmailActionController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class EmailActionControllerTest {
 
@@ -46,7 +49,7 @@ public class EmailActionControllerTest {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("action", ActionType.READ_ALL);
 
-        mockMvc.perform(post("/emails/actions/" + testEmailOne.getId().toString())
+        mockMvc.perform(post("/api/emails/actions/" + testEmailOne.getId().toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody))
                 .accept(MediaType.APPLICATION_JSON))
@@ -60,7 +63,7 @@ public class EmailActionControllerTest {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("action", "invalid action type");
 
-        mockMvc.perform(post("/emails/actions")
+        mockMvc.perform(post("/api/emails/actions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody))
                 .accept(MediaType.APPLICATION_JSON))
@@ -85,7 +88,7 @@ public class EmailActionControllerTest {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("action", ActionType.READ_ALL.name());
 
-        mockMvc.perform(post("/emails/actions")
+        mockMvc.perform(post("/api/emails/actions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody))
                 .accept(MediaType.APPLICATION_JSON))
@@ -118,7 +121,7 @@ public class EmailActionControllerTest {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("action", ActionType.UNREAD_ALL.name());
 
-        mockMvc.perform(post("/emails/actions")
+        mockMvc.perform(post("/api/emails/actions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody))
                 .accept(MediaType.APPLICATION_JSON))
@@ -141,7 +144,7 @@ public class EmailActionControllerTest {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("action", ActionType.READ_ALL.name());
 
-        mockMvc.perform(post("/emails/actions")
+        mockMvc.perform(post("/api/emails/actions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody))
                 .accept(MediaType.APPLICATION_JSON))
@@ -159,7 +162,7 @@ public class EmailActionControllerTest {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("action", ActionType.UNREAD_ALL.name());
 
-        mockMvc.perform(post("/emails/actions")
+        mockMvc.perform(post("/api/emails/actions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody))
                 .accept(MediaType.APPLICATION_JSON))
@@ -172,7 +175,7 @@ public class EmailActionControllerTest {
 
     @Test
     public void handleDeleteAllSuccessfully_NoContentStatusReturned() throws Exception {
-        mockMvc.perform(delete("/emails/actions"))
+        mockMvc.perform(delete("/api/emails/actions"))
                 .andExpect(status().isNoContent());
 
         verify(repository, times(1)).deleteAll();

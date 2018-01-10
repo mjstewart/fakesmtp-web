@@ -7,7 +7,7 @@
     "elm-make": "node_modules/.bin/elm-make",
     "elm-package": "node_modules/.bin/elm-package",
     "elm-test": "node_modules/.bin/elm-test",
-    "start": "webpack-dev-server--env=dev",
+    "start": "webpack-dev-server --env=dev",
     "build": "webpack -p --env=prod --display-error-details"
   },
   "dependencies": {

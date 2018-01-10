@@ -69,7 +69,7 @@ public class EmailIntegration {
      * <p>https://stackoverflow.com/questions/34530544/java-spring-sseemitter-responsebodyemitter-detect-browser-reloads
      *
      */
-    @GetMapping(value = "/stream/emails/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/api/stream/emails/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter emailStream(@PathVariable("id") String id) {
         SseEmitter sseEmitter = new SseEmitter(NO_TIMEOUT);
         emitters.put(id, sseEmitter);
