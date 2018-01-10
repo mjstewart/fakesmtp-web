@@ -358,9 +358,6 @@ update msg model =
 
         Msgs.ToggleEmailReadResult (Ok updatedEmail) ->
             let
-                _ =
-                    Debug.log "ToggleEmailReadResult" updatedEmail
-
                 newMappings : Dict EmailId Email
                 newMappings =
                     replaceExistingEmail updatedEmail model.emailModel.mappings

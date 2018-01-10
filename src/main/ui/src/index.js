@@ -1,5 +1,10 @@
 'use strict';
 
+// for webpack bundling
+require('semantic-ui-css/semantic.min.css');
+require('../src/styles/core.css');
+require('semantic-ui-css/semantic.min.js');
+
 var Elm = require('./Main.elm');
 var mountNode = document.getElementById('main');
 

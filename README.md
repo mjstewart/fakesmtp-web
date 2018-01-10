@@ -9,6 +9,20 @@ Work in progress
 - Provide rest interface to access emails
 
 
+## Implementation 
+
+
+## Dev stuff
+
+webpack builds the elm bundle and assets into `resources/static` which is where spring boot serves static content by default.
+webpack also generates the ui entry point `index.html` in `resources/templates` where spring boot maps this to
+the root path `localhost:8080` by default.  
+
+`cd /src/main/ui`
+
+`yarn run build`
+
+Development can be done using webpack dev server `yarn run start`.
 
 # rest api
 
