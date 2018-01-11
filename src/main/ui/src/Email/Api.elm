@@ -10,22 +10,22 @@ import AppTypes
 import Utils
 
 
-getEmails : Cmd Msg
-getEmails =
+getEmails : AppTypes.Config -> Cmd Msg
+getEmails { apiUrl } =
     let
         request : Http.Request (List Email)
         request =
-            Http.get "http://localhost:8080/api/emails?sort=sentDate,desc" EmailDecoders.decodeEmails
+            Http.get (apiUrl ++ "/api/emails?sort=sentDate,desc") EmailDecoders.decodeEmails
     in
         Http.send Msgs.GetEmailsResult request
 
 
-requestToggleEmailRead : Email -> Cmd Msg
-requestToggleEmailRead email =
+requestToggleEmailRead : AppTypes.Config -> Email -> Cmd Msg
+requestToggleEmailRead { apiUrl } email =
     let
         url : AppTypes.Url
         url =
-            appendEmailIdToUrl (AppTypes.Url "http://localhost:8080/api/emails") email.id
+            appendEmailIdToUrl (AppTypes.Url (apiUrl ++ "/api/emails")) email.id
 
         body : Http.Body
         body =
@@ -38,11 +38,11 @@ requestToggleEmailRead email =
         Http.send Msgs.ToggleEmailReadResult request
 
 
-requestReadAllEmails : Cmd Msg
-requestReadAllEmails =
+requestReadAllEmails : AppTypes.Config -> Cmd Msg
+requestReadAllEmails { apiUrl } =
     let
         url =
-            "http://localhost:8080/api/emails/actions"
+            apiUrl ++ "/api/emails/actions"
 
         body : Http.Body
         body =
@@ -55,11 +55,11 @@ requestReadAllEmails =
         Http.send Msgs.ReadAllResult request
 
 
-requestUnreadAllEmails : Cmd Msg
-requestUnreadAllEmails =
+requestUnreadAllEmails : AppTypes.Config -> Cmd Msg
+requestUnreadAllEmails { apiUrl } =
     let
         url =
-            "http://localhost:8080/api/emails/actions"
+            apiUrl ++ "/api/emails/actions"
 
         body : Http.Body
         body =
@@ -72,12 +72,12 @@ requestUnreadAllEmails =
         Http.send Msgs.UnreadAllResult request
 
 
-requestDeleteEmail : EmailId -> Cmd Msg
-requestDeleteEmail id =
+requestDeleteEmail : AppTypes.Config -> EmailId -> Cmd Msg
+requestDeleteEmail { apiUrl } id =
     let
         url : AppTypes.Url
         url =
-            appendEmailIdToUrl (AppTypes.Url "http://localhost:8080/api/emails") id
+            appendEmailIdToUrl (AppTypes.Url (apiUrl ++ "/api/emails")) id
 
         request : Http.Request EmailId
         request =
@@ -86,12 +86,12 @@ requestDeleteEmail id =
         Http.send Msgs.DeleteEmailResult request
 
 
-requestDeleteAllEmails : Cmd Msg
-requestDeleteAllEmails =
+requestDeleteAllEmails : AppTypes.Config -> Cmd Msg
+requestDeleteAllEmails { apiUrl } =
     let
         url : AppTypes.Url
         url =
-            AppTypes.Url "http://localhost:8080/api/emails/actions"
+            AppTypes.Url (apiUrl ++ "/api/emails/actions")
 
         request : Http.Request ()
         request =

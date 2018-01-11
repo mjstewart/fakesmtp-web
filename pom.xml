@@ -5,11 +5,11 @@
 
 	<groupId>com.github.mjstewart</groupId>
 	<artifactId>fakesmtp-web</artifactId>
-	<version>0.0.1</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>fakesmtp-web</name>
-	<description>Web support for FakeSMTP running in docker</description>
+	<description>Web support for FakeSMTP</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

@@ -12,3 +12,10 @@ type alias ApiErrorModal =
 type alias Url =
     { value : String
     }
+
+
+{-| Flags passed in for app configuration
+-}
+type alias Config =
+    { apiUrl : String
+    }

@@ -3,7 +3,7 @@ module Main exposing (..)
 import Http
 import Dict exposing (Dict)
 import Messages as Msgs exposing (Msg)
-import Html as H exposing (Html, program)
+import Html as H exposing (Html, programWithFlags)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
 import Email.Api as EmailApi
@@ -24,7 +24,6 @@ import AppTypes
 import Email.Decoders as EmailDecoders
 import Json.Decode as Decode
 import Maybe.FlatMap as MaybeExtra
-import Debug
 
 
 -- MODEL
@@ -40,11 +39,24 @@ type alias LoadIndicator =
 
 
 type alias Model =
-    { emailModel : EmailModel
+    { config : AppTypes.Config
+    , emailModel : EmailModel
     , loadIndicator : LoadIndicator
     , emailStreamStatus : Msgs.StreamState
     , selectedEmailId : Maybe EmailId
     }
+
+
+init : AppTypes.Config -> ( Model, Cmd Msg )
+init config =
+    ( { config = config
+      , emailModel = EmailModel [] Dict.empty
+      , loadIndicator = showAppLoadIndicator True
+      , emailStreamStatus = Msgs.Closed
+      , selectedEmailId = Nothing
+      }
+    , EmailApi.getEmails config
+    )
 
 
 {-| Used to map an Email to its key in the model dict
@@ -186,17 +198,6 @@ deleteSelectedEmail emailId maybeSelectedEmail =
         )
         (Just emailId)
         maybeSelectedEmail
-
-
-init : ( Model, Cmd Msg )
-init =
-    ( { emailModel = EmailModel [] Dict.empty
-      , loadIndicator = showAppLoadIndicator True
-      , emailStreamStatus = Msgs.Closed
-      , selectedEmailId = Nothing
-      }
-    , EmailApi.getEmails
-    )
 
 
 
@@ -347,14 +348,14 @@ update msg model =
                 | loadIndicator = showMiniLoadIndicator True
                 , selectedEmailId = Just email.id
               }
-            , EmailApi.requestToggleEmailRead email
+            , EmailApi.requestToggleEmailRead model.config email
             )
 
         Msgs.EmailAction Msgs.ReadAll ->
-            ( { model | loadIndicator = showMiniLoadIndicator True }, EmailApi.requestReadAllEmails )
+            ( { model | loadIndicator = showMiniLoadIndicator True }, EmailApi.requestReadAllEmails model.config )
 
         Msgs.EmailAction Msgs.UnreadAll ->
-            ( { model | loadIndicator = showMiniLoadIndicator True }, EmailApi.requestUnreadAllEmails )
+            ( { model | loadIndicator = showMiniLoadIndicator True }, EmailApi.requestUnreadAllEmails model.config )
 
         Msgs.ToggleEmailReadResult (Ok updatedEmail) ->
             let
@@ -431,7 +432,7 @@ update msg model =
             ( model, Cmd.none )
 
         Msgs.DeleteEmail id ->
-            ( { model | loadIndicator = showMiniLoadIndicator True }, EmailApi.requestDeleteEmail id )
+            ( { model | loadIndicator = showMiniLoadIndicator True }, EmailApi.requestDeleteEmail model.config id )
 
         Msgs.DeleteEmailResult (Ok emailId) ->
             let
@@ -450,7 +451,7 @@ update msg model =
             handleApiError model reason
 
         Msgs.DeleteAllEmails ->
-            ( { model | loadIndicator = showMiniLoadIndicator True }, EmailApi.requestDeleteAllEmails )
+            ( { model | loadIndicator = showMiniLoadIndicator True }, EmailApi.requestDeleteAllEmails model.config )
 
         Msgs.DeleteAllEmailsResult (Ok ()) ->
             let
@@ -572,9 +573,9 @@ decodeEmailStreamMessage jsonString =
 -- MAIN
 
 
-main : Program Never Model Msg
+main : Program AppTypes.Config Model Msg
 main =
-    program
+    programWithFlags
         { init = init
         , view = view
         , update = update

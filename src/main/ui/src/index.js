@@ -5,11 +5,14 @@ require('semantic-ui-css/semantic.min.css');
 require('../src/styles/core.css');
 require('semantic-ui-css/semantic.min.js');
 
+var apiUrl = process.env.FAKE_SMTP_WEB_API_URL || 'localhost:8080';
+
 var Elm = require('./Main.elm');
 var mountNode = document.getElementById('main');
 
-// .embed() can take an optional second argument. This would be an object describing the data we need to start a program, i.e. a userID or some token
-var app = Elm.Main.embed(mountNode);
+var app = Elm.Main.embed(mountNode, {
+    apiUrl: apiUrl
+});
 
 app.ports.showErrorModal.subscribe(function(apiErrorModal) {
     var modal = $('.ui.modal');
@@ -28,7 +31,7 @@ app.ports.showErrorModal.subscribe(function(apiErrorModal) {
 app.ports.subscribeToEmailStream.subscribe(function(appIdentifier) {
     var CLOSED = 2;
 
-    var source = new EventSource("http://localhost:8080/api/stream/emails/" + appIdentifier);
+    var source = new EventSource(apiUrl + "/api/stream/emails/" + appIdentifier);
 
     if (source.readyState === CLOSED) {
         app.ports.emailStreamClosed.send(null);
