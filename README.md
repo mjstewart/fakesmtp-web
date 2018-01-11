@@ -1,18 +1,329 @@
-# Web support for fakeSMTP running in docker
+# Web support for FakeSMTP running in docker
+
+The original project [FakeSMTP](https://github.com/Nilhcem/FakeSMTP) offers a GUI in java swing which is fine if you
+want something basic and don't wish to use docker.
+
+This project provides web support for FakeSMTP running in docker with the following features
+- rest api supporting common crud operations
+- new emails are published to a server sent event stream
+- web ui written in elm
+
+The rest api produces email data modelled from a [MimeMessage](https://docs.oracle.com/javaee/7/api/javax/mail/internet/MimeMessage.html)
+including attachments and other nice to know things you would typically like to see during development. 
+See [API](#API).
+ 
+# Setup
+
+### Recommended  - Use docker compose
+
+Its recommended to use docker compose to simplify the setup.
+
+1. copy and paste the projects `docker-compose.yml` file into an empty directory
+2. cd into the directory containing the `docker-compose.yml file`
+2. `docker-compose up -d`. 
+
+Open a browser and navigate to `localhost:60500` which will display the ui (it may take a minute to start up).
+
+See [API](#API) for rest endpoints or [Configuration](#Configuration) to change the server IP.
+
+### Without docker compose
+
+If you don't wish to use docker compose, you'll need to start each container individually. 
+
+1 - [FakeSMTP docker](https://github.com/munkyboy/docker-fakesmtp) needs to be run first
+
+`docker run --name fake-smtp -d -p 25:25 -v ~/fake-smtp-emails:/var/mail munkyboy/fakesmtp`
+ 
+2 - Start the fakesmtp-web container (Note: the host port must be 60500, see [Configuration](#Configuration))
+
+`docker run --name fake-smtp-web -d -p 60500:8080 -v ~/fake-smtp-emails:/var/mail mjstewart/fakesmtp-web:1.0`
+
+If you need to change any configuration settings outlined in [Configuration](#Configuration), the docker syntax
+for passing in environment variables is
+
+```
+docker run --name fake-smtp-web -d -p 60500:8080 \
+-v ~/fake-smtp-emails:/var/mail \ 
+-e EMAIL_INPUT_DIR_POLL_RATE_SECONDS=10 \
+mjstewart/fakesmtp-web:1.0
+```
+
+# Configuration
+
+`docker-compose.yml` is used as the walk through example.
+
+### Volumes
+The `volumes` mapping for both containers is
+
+`~/fake-smtp-emails:/var/mail`
+
+You can read this as - Within each docker container, `/var/mail` is used to store emails which is mounted to the host
+directory `~/fake-smtp-emails`.
+
+This results in 
+- [docker-fakesmtp](https://github.com/munkyboy/docker-fakesmtp) writing emails into `~/fake-smtp-emails` 
+- [fakesmtp-web](https://github.com/mjstewart/fakesmtp-web) reading emails from `~/fake-smtp-emails`
+ 
+If you want a different host directory, be sure to change both volumes for each service eg:
+`/some-other-dir:/var/mail`
 
 
-Work in progress
+### Poll rate
 
-## Goals 
+`~/fake-smtp-emails` is polled every 10 seconds to check for new emails. 
+This can be changed by setting `EMAIL_INPUT_DIR_POLL_RATE_SECONDS`.
 
-- Provide app front end connected to websockets for real time emails.
-- Provide rest interface to access emails
+Anything over 1 second is recommended to avoid potential issues in emails not getting parsed correctly.
+
+### API URL and port settings
+
+`http://localhost:60500` is used by default to prevent port clashes on the host machine. The docker port mappings must NOT
+be changed as the ui code contained within the docker image is hard coded with this port for convenience.
+
+If you wish to deploy on a different IP and port, you'll have to manually build the project. 
+See [Build custom docker image](#Build-custom-docker-image)
+
+# Build custom docker image
+
+By default, `http://localhost:60500` is the server IP and port the application is accessible on.
+This behaviour can be changed by manually building a new docker image through the following steps.
+  
+You will need yarn and maven installed on your system. Once installed, go to the project directory and
+execute the `build.sh` script.
+
+1. Optional - set server IP and port in `build.sh` using environment variable `FAKE_SMTP_WEB_API`
+
+2. If `FAKE_SMTP_WEB_API` is updated, the `fake-smtp-web` service in `docker-compose.yml` must have its port mappings
+updated to be the same. 
+
+3. To avoid the docker image name clashing with the existing image on docker hub, change the image name
+in `build.sh` to something unique.
+
+    `docker build -t custom/fakesmtp-web .`
+4. Run `./build.sh`
+
+See [FAQ](#FAQ) for non docker build instructions.
+
+# API
+
+## Server sent event stream  /api/stream/emails/{id} 
+
+Subscribe to receive new emails. The id should be a unique identifier the server uses to track your session.
+Eg - something like this is fine.
+
+`http://localhost:60500/api/stream/emails/client123Blah`
+
+The frequency of receiving new emails depends on the environment variable
+`EMAIL_INPUT_DIR_POLL_RATE_SECONDS`. This is configurable in `docker-compose.yml`. 
+
+##  GET /api/emails
+Returns collection of all the emails.
+
+Its possible to sort the emails by any field and order. For example, to get all emails 
+ordered from newest to oldest.
+
+`/api/emails?sort=sentDate,desc`
+
+#### Example json email structure
+
+- All string fields should be considered optional and may return null depending on the email parsing.
+- Arrays are always empty if there's no data rather than null.
+- Attachment disposition 'inline' refers to content belonging to the email body. Disposition 'attachment' is an explicit
+attachment added to the email like a pdf file or something.
+
+```$json
+{
+    "_embedded": {
+        "emails": [
+            {
+                "id": "95f665cc-bbf3-4da5-a2cb-621c69d59b50",
+                "subject": "Testing registration service",
+                "replyTo": [
+                    "no-reply@user-registration.com"
+                ],
+                "body": {
+                    "content": "some html string here",
+                    "contentType": {
+                        "mediaType": "text/html",
+                        "charset": "utf-8"
+                    }
+                },
+                "receivedDate": null,
+                "sentDate": "2017-12-25T06:55:34",
+                "description": "a test email",
+                "toRecipients": [
+                    "user100@email.com"
+                ],
+                "ccRecipients": ["person1@email.com", "person2@email.com"],
+                "bccRecipients": ["person3@email.com", "person4@email.com"],
+                "attachments": [
+                    {
+                        "id": "d81dcf50-cb89-4cd2-b348-d41215020513",
+                        "fileName": "styles.css",
+                        "disposition": "attachment",
+                        "contentType": {
+                            "mediaType": "text/css",
+                            "charset": "us-ascii"
+                        }
+                    },
+                    {
+                        "id": "f4bc2c82-7dad-40f4-9ae1-f102525cb525",
+                        "fileName": "notes.txt",
+                        "disposition": "attachment",
+                        "contentType": {
+                            "mediaType": "text/plain",
+                            "charset": "us-ascii"
+                        }
+                    },
+                    {
+                        "id": "62edda6b-7d67-4c43-8093-4af029c19e0f",
+                        "fileName": "menu",
+                        "disposition": "inline",
+                        "contentType": {
+                            "mediaType": "text/plain",
+                            "charset": "us-ascii"
+                        }
+                    },
+                    {
+                        "id": "86495017-7988-496c-8e3b-b8d597e91853",
+                        "fileName": "styles",
+                        "disposition": "inline",
+                        "contentType": {
+                            "mediaType": "text/css",
+                            "charset": "us-ascii"
+                        }
+                    }
+                ],
+                "read": false,
+                "from": [
+                    "no-reply@user-registration.com"
+                ],
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:60500/api/emails/95f665cc-bbf3-4da5-a2cb-621c69d59b50"
+                    },
+                    "email": {
+                        "href": "http://localhost:60500/api/emails/95f665cc-bbf3-4da5-a2cb-621c69d59b50"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:60500/api/emails"
+        },
+        "profile": {
+            "href": "http://localhost:60500/api/profile/emails"
+        }
+    }
+}
+```
+
+##  GET /api/emails/{id}
+Get a single email by id
+
+## DELETE /api/emails/{id}
+Delete a single email by id. Returns 204 No Content on successful deletion.
+
+## DELETE /api/emails/actions
+Delete all emails. Returns 204 No Content on successful deletion.
+
+## POST /api/emails/actions
+
+Include a json body with either action type to mark all emails read / unread.
+
+```
+{
+ "action": "READ_ALL" | "UNREAD_ALL" 
+}
+```
+
+The response is a list containing the read status of each updated email.
+
+```$xslt
+[
+    {
+        "id": "95f665cc-bbf3-4da5-a2cb-621c69d59b50",
+        "read": true
+    },
+    {
+        "id": "35f665cc-ccc3-4da5-a2cb-621c69d59b50",
+        "read": true
+    },
+]
+```
+
+## PATCH /api/emails/{id}
+Update any field in a single email. Returns 200 OK on successful update.
+
+For example, to change an emails `subject, read, replyTo` fields.
+
+```
+{
+   "subject": "a new subject...",
+   "read": true,
+   "replyTo": ["someone-different@email.com"]
+} 
+```
+
+# FAQ
+
+### Will this only work in docker?
+
+Technically no, but using `docker-compose` really simplifies the setup.
+
+To use without docker assuming you have some form of [FakeSMTP](https://github.com/Nilhcem/FakeSMTP) 
+(standalone jar or in docker) writing emails to an output directory then...
+
+1. clone this repo
+
+2. set environment variables on your host machine. (Be careful - its common to need to reboot your 
+computer for these variables to be updated or to `source ~/.bashrc` depending on your method.)
+
+   - `EMAIL_INPUT_DIR=/output-directory` (The directory FakeSMTP is writing emails into)
+
+   - `EMAIL_INPUT_DIR_POLL_RATE_SECONDS=10`
+
+   - `FAKE_SMTP_WEB_API` (IP address and port the API will be deployed on, eg `http://localhost:60500`).
+
+3. build
+
+You will need yarn and maven installed on your system. Once installed, go to the project directory and
+execute the following commands in order.
+
+```
+cd src/main/ui
+yarn
+yarn run build
+cd ../../../
+mvn clean package -DskipTests
+```
+
+Step 4. 
+
+Run the jar maven created in the target folder of the project root directory.
+
+`java -jar target/fakesmtp-web-1.0.jar`
 
 
-## Implementation 
+# Implementation details
+- Spring Boot
+- Spring Integration
+- Elm
 
+Spring integration is used to poll the `EMAIL_INPUT_DIR` representing the directory FakeSMTP outputs emails into. This
+directory corresponds to the mounted host directory used in docker `~/fake-smtp-emails`.
+The poll rate is configurable using `EMAIL_INPUT_DIR_POLL_RATE_SECONDS`.
 
-## Dev stuff
+Spring integration reads every new email in this directory and parses it into valid domain objects before sending
+it into a pub/sub channel where 2 subscribers are waiting.
+
+- subscriber 1 saves the email into a h2 in memory database which enables the rest api.
+
+- subscriber 2 emits the email through a server sent event stream for real time email updates.
+
+# Dev stuff
 
 webpack builds the elm bundle and assets into `resources/static` which is where spring boot serves static content by default.
 webpack also generates the ui entry point `index.html` in `resources/templates` where spring boot maps this to
@@ -23,81 +334,3 @@ the root path `localhost:8080` by default.
 `yarn run build`
 
 Development can be done using webpack dev server `yarn run start`.
-
-# rest api
-
-Only HTTP GET is permitted to the following endpoints
-
-The json structure of each email is outlined below where the /emails end point returns a paged HATEOAS response.
-a
-### /emails
-
-Gets all the emails contained in `EMAIL_INPUT_DIR`
-
-A sort query parameter can order emails on any field / order. For example the below url will return all emails ordered 
-from newest to oldest.
-`http://localhost:8080/emails?sort=sendDate,desc`
-
-        {
-            "_embedded": {
-                "emails": [
-                    {d
-                        "id": String UUID,
-                        "subject": String | null
-                        "from": List String,
-                        "replyTo": List String
-                        "body": {
-                            "content": String,
-                            "contentType": {
-                                "mediaType": MimeType - "text/html" | "text/plain" | ... | null
-                                "charset": "utf-8" | "us-ascii" | ... | null
-                            } | null
-                        },
-                        "receivedDate": "2017-12-28T20:15:22" | null,
-                        "sentDate": "2017-12-28T20:15:22" | null
-                        "description": String | null,
-                        "toRecipients": List String,
-                        "ccRecipients": List String,
-                        "bccRecipients": List String,
-                        "attachments": [
-                            {
-                                "id": String UUID,
-                                "fileName": String | null,
-                                "disposition": "inline" | "attachment" | null,
-                                "contentType": {
-                                        "mediaType": MimeType - "text/html" | "text/plain" | ... | null
-                                        "charset": "utf-8" | "us-ascii" | ... | null
-                                } | null
-                            },
-                         ],
-                        "_links": {
-                            "self": {
-                                "href": "http://localhost:8080/emails/{id}"
-                            },
-                            "email": {
-                                "href": "http://localhost:8080/emails/{id}"
-                            }
-                        }
-                    }
-                ]
-            },
-            "_links": {
-                "self": {
-                    "href": "http://localhost:8080/emails{?page,size,sort}",
-                    "templated": true
-                },
-                "profile": {
-                    "href": "http://localhost:8080/profile/emails"
-                }
-            }
-        }
-        
-### /emails/id
-Return single email by id
-
-
-# Server Sent Events
-
-### /stream/emails
-
-When a new email is sent 
