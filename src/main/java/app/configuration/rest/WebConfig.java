@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         // Need to handle config for all non spring data rest controllers
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:9000")
+                .allowedOrigins("*")
                 .allowedMethods("*");
     }
 }

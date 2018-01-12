@@ -14,7 +14,7 @@ public class SpringDataRestCustomization extends RepositoryRestConfigurerAdapter
         config.exposeIdsFor(EmailMessage.class, EmailAttachment.class);
 
         config.getCorsRegistry().addMapping("/**")
-                .allowedOrigins("http://localhost:9000")
+                .allowedOrigins("*")
                 .allowedMethods("*");
     }
 }

@@ -10,11 +10,10 @@ services:
   fake-smtp-web:
     image: mjstewart/fakesmtp-web
     container_name: fake-smtp-web
-    ports: 8200:8080
+    ports: 60500:8080
     environment:
       - EMAIL_INPUT_DIR=~/fake-smtp-emails
       - EMAIL_INPUT_DIR_POLL_RATE_SECONDS=10
-      - FAKE_SMTP_WEB_API_URL=localhost:8200
     depends_on:
       - fake-smtp
 

@@ -1,4 +1,4 @@
-FROM openjdk:8-alpine
+FROM openjdk:8-alpine3.7
 COPY target/fakesmtp-web-1.0.jar /opt/fakesmtp-web/
 VOLUME ["/var/mail"]
 ENV EMAIL_INPUT_DIR="/var/mail" \

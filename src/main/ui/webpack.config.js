@@ -8,8 +8,19 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const BUILD_DIR = path.resolve('../resources/static/ui');
 const INDEX_HTML_PATH = path.resolve('../resources/templates/index.html');
 
+const ApiSettings = {
+    devApi: 'http://localhost:8080',
+
+    /* 
+     * Docker host port must be hardcoded to 60500 (a random port I chose). eg ports: 60500:8080
+     * Since the webpack injects this api url upon building, once theyre set theyre set. 
+     * So if you use 'docker run' supplying different host port mappings, the ui wont connect to the rest api anymore.
+     */
+    productionApi: 'http://localhost:60500'
+}
+
 module.exports = function (env) {
-    // production build links in index.html need to resolve to BUILD_DIR  
+    // production build link tags in index.html need to resolve to BUILD_DIR  
     const publicPath = (env === 'prod') ? '/ui/' : '/';
 
     const config = {
@@ -71,6 +82,9 @@ module.exports = function (env) {
                 filename: INDEX_HTML_PATH,
                 template: path.resolve(__dirname, 'src', 'index.html'),
                 inject: 'body',
+            }),
+            new webpack.DefinePlugin({
+                API_URL: (env === 'prod') ? JSON.stringify(ApiSettings.productionApi) : JSON.stringify(ApiSettings.devApi)
             })
         ],
         devServer: {
