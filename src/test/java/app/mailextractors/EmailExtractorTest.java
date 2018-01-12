@@ -285,7 +285,7 @@ public class EmailExtractorTest {
         assertThat(meta.getSentDate()).isNotNull();
         assertThat(meta.getDescription()).isNull();
         assertThat(meta.getAttachments()).isEmpty();
-        assertThat(meta.isRead()).isTrue();
+        assertThat(meta.isRead()).isFalse();
     }
 
     @Test
@@ -332,7 +332,7 @@ public class EmailExtractorTest {
         assertThat(meta.getSubject()).isEqualTo("Warehouse manager - Activate new account");
         assertThat(meta.getSentDate()).isNotNull();
         assertThat(meta.getDescription()).isNull();
-        assertThat(meta.isRead()).isTrue();
+        assertThat(meta.isRead()).isFalse();
         assertThat(meta.getAttachments())
                 .usingElementComparator(EmailAttachment.excludeIdComparator())
                 .containsExactlyInAnyOrder(
