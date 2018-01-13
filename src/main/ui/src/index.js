@@ -30,7 +30,7 @@ app.ports.subscribeToEmailStream.subscribe(function(appIdentifier) {
     var CLOSED = 2;
 
     var source = new EventSource(API_URL + "/api/stream/emails/" + appIdentifier);
-
+ 
     if (source.readyState === CLOSED) {
         app.ports.emailStreamClosed.send(null);
         return;

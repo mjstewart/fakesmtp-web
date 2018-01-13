@@ -5,6 +5,8 @@ import Test exposing (..)
 import Dict exposing (Dict)
 import Utils
 import AppTypes
+import Views.FormatUtils as FormatUtils
+import Email.Types as Types
 
 
 suite : Test
@@ -123,5 +125,38 @@ suite =
                             Utils.maybePredicate (\x -> x == 2) <| Just 2
                     in
                         Expect.true "expected true but got false" result
+            ]
+        , describe "FormatUtils getEmailBodyContent"
+            [ test "handles no EmailBody" <|
+                \_ ->
+                    Expect.equal "No body" <| FormatUtils.getEmailBodyContent Nothing
+            , test "handles EmailBody with no content" <|
+                \_ ->
+                    let
+                        body : Types.EmailBody
+                        body =
+                            { content = Nothing
+                            , contentType =
+                                Just
+                                    { mediaType = Just "text/plain"
+                                    , charset = Just "us-ascii"
+                                    }
+                            }
+                    in
+                        Expect.equal "No body" <| FormatUtils.getEmailBodyContent (Just body)
+            , test "handles EmailBody with content" <|
+                \_ ->
+                    let
+                        body : Types.EmailBody
+                        body =
+                            { content = Just "hello world"
+                            , contentType =
+                                Just
+                                    { mediaType = Just "text/plain"
+                                    , charset = Just "us-ascii"
+                                    }
+                            }
+                    in
+                        Expect.equal "hello world" <| FormatUtils.getEmailBodyContent (Just body)
             ]
         ]

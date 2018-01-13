@@ -17,7 +17,7 @@ type Msg
     | DeleteAllEmailsResult (Result Http.Error ())
     | EmailStream StreamState
     | ReceiveEmailStreamMessage (Result String Email)
-    | ErrorModalClosed 
+    | ErrorModalClosed
 
 
 type EmailAction

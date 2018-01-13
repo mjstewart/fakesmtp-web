@@ -486,7 +486,7 @@ update msg model =
             in
                 ( { model | emailModel = newEmailModel }, Cmd.none )
 
-        Msgs.ReceiveEmailStreamMessage (Err _) ->
+        Msgs.ReceiveEmailStreamMessage (Err e) ->
             ( model, showErrorModal <| getErrorModalPayload "Error decoding email received from server sent event stream." )
 
 

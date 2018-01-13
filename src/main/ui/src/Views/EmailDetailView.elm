@@ -39,9 +39,9 @@ quickActionView email =
             [ H.i [ class "icon unhide" ] []
             , H.text
                 (if email.read then
-                    "Mark Read"
-                 else
                     "Mark Unread"
+                 else
+                    "Mark Read"
                 )
             ]
         , H.button [ class "ui button mini", onClick (Msgs.DeleteEmail email.id) ]
@@ -274,35 +274,46 @@ getAttachmentContentTypeView attachment =
                 ]
 
 
-{-| Render an iframe for anything other than text/plain.
-An iframe is used so no css is used. The fake email could have css classes that this
+{-| Render an iframe for any existing EmailBody content other than text/plain.
+An iframe is used to avoid any css taking effect. The fake email could have css classes that this
 application uses and could interfere.
-
-The only issue with iframes is, hrefs will open in the iframe. Since this app is only
-concerned with visualizing the email it doesnt matter.
-
 -}
-getBodyView : EmailBody -> Html Msg
-getBodyView body =
-    H.div [ class "email-detail-body-wrapper email-detail-section" ]
-        [ H.div [ class "header section-header" ]
-            [ H.h4 [] [ H.text "Body" ]
-            , getContentTypeView body.contentType
-            ]
-        , H.div [ class "body" ]
-            [ case body.contentType of
-                Nothing ->
-                    H.iframe [ srcdoc body.content ] []
+getBodyView : Maybe EmailBody -> Html Msg
+getBodyView maybeEmailBody =
+    case maybeEmailBody of
+        Nothing ->
+            H.div [ class "email-detail-body-wrapper email-detail-section" ]
+                [ H.div [ class "header section-header" ]
+                    [ H.h4 [] [ H.text "Body" ]
+                    , H.p [] [ H.text "No body" ]
+                    ]
+                ]
 
-                Just contentType ->
-                    case contentType.mediaType of
-                        Just "text/plain" ->
-                            H.p [] [ H.text body.content ]
+        Just emailBody ->
+            H.div [ class "email-detail-body-wrapper email-detail-section" ]
+                [ H.div [ class "header section-header" ]
+                    [ H.h4 [] [ H.text "Body" ]
+                    , getContentTypeView emailBody.contentType
+                    ]
+                , H.div [ class "body" ]
+                    [ case emailBody.content of
+                        Nothing ->
+                            H.p [] [ H.text "No body" ]
 
-                        _ ->
-                            H.iframe [ srcdoc body.content ] []
-            ]
-        ]
+                        Just content ->
+                            case emailBody.contentType of
+                                Nothing ->
+                                    H.iframe [ srcdoc content ] []
+
+                                Just contentType ->
+                                    case contentType.mediaType of
+                                        Just "text/plain" ->
+                                            H.p [] [ H.text content ]
+
+                                        _ ->
+                                            H.iframe [ srcdoc content ] []
+                    ]
+                ]
 
 
 getContentTypeView : Maybe ContentType -> Html Msg

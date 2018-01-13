@@ -17,7 +17,7 @@ decodeEmail =
         |> required "subject" (Decode.maybe Decode.string)
         |> required "from" (Decode.list Decode.string)
         |> required "replyTo" (Decode.list Decode.string)
-        |> required "body" decodeEmailBody
+        |> required "body" (Decode.maybe decodeEmailBody)
         |> required "receivedDate" (Decode.maybe Decode.string)
         |> required "sentDate" Decode.string
         |> required "description" (Decode.maybe Decode.string)
@@ -31,24 +31,24 @@ decodeEmail =
 decodeEmailBody : Decoder EmailBody
 decodeEmailBody =
     Decode.map2 EmailBody
-        (Decode.field "content" Decode.string)
-        (Decode.field "contentType" (Decode.maybe decodeContentType))
+        (Decode.field "content" <| Decode.maybe Decode.string)
+        (Decode.field "contentType" <| Decode.maybe decodeContentType)
 
 
 decodeContentType : Decoder ContentType
 decodeContentType =
     Decode.map2 ContentType
-        (Decode.field "mediaType" (Decode.maybe Decode.string))
-        (Decode.field "charset" (Decode.maybe Decode.string))
+        (Decode.field "mediaType" <| Decode.maybe Decode.string)
+        (Decode.field "charset" <| Decode.maybe Decode.string)
 
 
 decodeAttachment : Decoder EmailAttachment
 decodeAttachment =
     Decode.map4 EmailAttachment
         (Decode.field "id" Decode.string)
-        (Decode.field "fileName" (Decode.maybe Decode.string))
-        (Decode.field "disposition" (Decode.maybe Decode.string))
-        (Decode.field "contentType" (Decode.maybe decodeContentType))
+        (Decode.field "fileName" <| Decode.maybe Decode.string)
+        (Decode.field "disposition" <| Decode.maybe Decode.string)
+        (Decode.field "contentType" <| Decode.maybe decodeContentType)
 
 
 decodeManyEmailsReadStatus : Decoder (List EmailReadStatus)

@@ -68,18 +68,25 @@ emailView email isSelected =
             ]
 
 
-inboxPreviewBody : EmailBody -> Html Msg
-inboxPreviewBody { content, contentType } =
-    let
-        contentTypeText : String
-        contentTypeText =
-            MaybeExtra.flatMap (\ct -> ct.mediaType) contentType
-                |> Utils.maybeOrElse "unknown content type"
-    in
-        div [ class "inbox-email-preview-body" ]
-            [ p [] [ text contentTypeText ]
-            , p [] [ text (inboxTextTruncator content) ]
-            ]
+inboxPreviewBody : Maybe EmailBody -> Html Msg
+inboxPreviewBody maybeEmailBody =
+    case maybeEmailBody of
+        Nothing ->
+            div [ class "inbox-email-preview-body" ]
+                [ p [] [ text "No body" ]
+                ]
+
+        Just { content, contentType } ->
+            let
+                contentTypeText : String
+                contentTypeText =
+                    MaybeExtra.flatMap (\ct -> ct.mediaType) contentType
+                        |> Utils.maybeOrElse "Unknown content type"
+            in
+                div [ class "inbox-email-preview-body" ]
+                    [ p [] [ text contentTypeText ]
+                    , p [] [ text (inboxTextTruncator <| Format.getEmailBodyContent maybeEmailBody) ]
+                    ]
 
 
 inboxQuickActions : Email -> Html Msg

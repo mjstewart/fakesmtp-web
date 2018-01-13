@@ -8,7 +8,7 @@ type alias Email =
     , subject : Maybe String
     , from : List String
     , replyTo : List String
-    , body : EmailBody
+    , body : Maybe EmailBody
     , receivedDate : Maybe String
     , sentDate : String
     , description : Maybe String
@@ -25,7 +25,7 @@ type alias EmailId =
 
 
 type alias EmailBody =
-    { content : String
+    { content : Maybe String
     , contentType : Maybe ContentType
     }
 

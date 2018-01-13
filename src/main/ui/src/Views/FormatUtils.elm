@@ -2,6 +2,7 @@ module Views.FormatUtils exposing (..)
 
 import Date
 import Date.Format as DF
+import Email.Types exposing (..)
 
 
 {-| Tue 3/Oct/2017 5:34:03 am
@@ -24,3 +25,18 @@ getSubject maybe =
 
         Nothing ->
             "No subject"
+
+
+getEmailBodyContent : Maybe EmailBody -> String
+getEmailBodyContent maybeEmailBody =
+    case maybeEmailBody of
+        Nothing ->
+            "No body"
+
+        Just emailBody ->
+            case emailBody.content of
+                Nothing ->
+                    "No body"
+
+                Just content ->
+                    content

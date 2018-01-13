@@ -4,15 +4,18 @@ services:
   fake-smtp:
     image: munkyboy/fakesmtp
     container_name: fake-smtp
+    ports: 
+      - "25:25"
     volumes:
       - ~/fake-smtp-emails:/var/mail
-    ports: 25:25
   fake-smtp-web:
-    image: mjstewart/fakesmtp-web
+    image: mjstewart/fakesmtp-web:1.0
     container_name: fake-smtp-web
-    ports: 60500:8080
+    ports: 
+      - "60500:8080"
+    volumes:
+      - ~/fake-smtp-emails:/var/mail
     environment:
-      - EMAIL_INPUT_DIR=~/fake-smtp-emails
       - EMAIL_INPUT_DIR_POLL_RATE_SECONDS=10
     depends_on:
       - fake-smtp
