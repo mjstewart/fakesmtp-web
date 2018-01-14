@@ -12,9 +12,14 @@ const ApiSettings = {
     devApi: 'http://localhost:8080',
 
     /* 
-     * Docker host port must be hardcoded to 60500 (a random port I chose). eg ports: 60500:8080
-     * Since the webpack injects this api url upon building, once theyre set theyre set. 
-     * So if you use 'docker run' supplying different host port mappings, the ui wont connect to the rest api anymore.
+     * Docker host port must be hardcoded to 60500 (a random port I chose to avoid clashes). eg ports: 60500:8080
+     * Webpack injects this api url upon building, so the client side bundle is hardcoded with these api endpoints for rest calls.
+     * 
+     * If 'docker run' is supplied a different host:port mapping, the ui wont connect to the rest api anymore given the client bundle 
+     * is already fixed with 60500. 
+     * 
+     * You need to build a new docker image supplying the FAKE_SMTP_WEB_API env variable corresponding to the server IP and port
+     * the client should connect to. build.sh is used to build new images.
      */
     productionApi: process.env.FAKE_SMTP_WEB_API || 'http://localhost:60500'
 }

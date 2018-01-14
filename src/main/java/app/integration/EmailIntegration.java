@@ -119,7 +119,7 @@ public class EmailIntegration {
         return IntegrationFlows.from(Files.inboundAdapter(in)
                 .autoCreateDirectory(false)
                 .preventDuplicates(true)
-                .patternFilter("*.eml"), c -> c.poller(Pollers.fixedRate(pollRateSeconds)))
+                .patternFilter("*.eml"), c -> c.poller(Pollers.fixedRate(pollRateSeconds * 1000)))
                 .transform(File.class, emailFileTransformer())
                 .channel(emailChannel())
                 .log(LoggingHandler.Level.INFO, "test.emailChannel", m -> "emailChannel: " + m.getPayload())
