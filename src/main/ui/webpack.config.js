@@ -16,7 +16,7 @@ const ApiSettings = {
      * Since the webpack injects this api url upon building, once theyre set theyre set. 
      * So if you use 'docker run' supplying different host port mappings, the ui wont connect to the rest api anymore.
      */
-    productionApi: 'http://localhost:60500'
+    productionApi: process.env.FAKE_SMTP_WEB_API || 'http://localhost:60500'
 }
 
 module.exports = function (env) {
