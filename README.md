@@ -11,20 +11,25 @@ This project provides web support for FakeSMTP running in docker with the follow
 The rest api produces email data modelled from a [MimeMessage](https://docs.oracle.com/javaee/7/api/javax/mail/internet/MimeMessage.html)
 including attachments and other nice to know things you would typically like to see during development. 
 See [API](#API).
- 
+
 # Setup
 
 ### Recommended  - Use docker compose
 
 Its recommended to use docker compose to simplify the setup.
+The default image is available on docker hub for convenience https://hub.docker.com/r/mjstewart/fakesmtp-web/
 
 1. copy and paste the projects `docker-compose.yml` file into an empty directory
 2. cd into the directory containing the `docker-compose.yml file`
 2. `docker-compose up -d`. 
 
-Open a browser and navigate to `localhost:60500` which will display the ui (it may take a minute to start up).
+Open a browser and navigate to `http://localhost:60500` which will display the ui (it may take a minute to start up).
 
-See [API](#API) for rest endpoints or [Configuration](#Configuration) to change the server IP.
+See [API](#API) for rest endpoints. 
+ 
+If you're deploying the container to a remote server or would just like to use a different IP address other than
+the default `http://localhost:60500` - see [API URL and port settings ](#API-URL-and-port-settings ) for a guide on how to manually build 
+a custom docker image with these changes.
 
 ### Without docker compose
 
