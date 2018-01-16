@@ -12,6 +12,8 @@ The rest api produces email data modelled from a [MimeMessage](https://docs.orac
 including attachments and other nice to know things you would typically like to see during development. 
 See [API](#API).
 
+[![Youtube demo](https://github.com/mjstewart/fakesmtp-web/blob/master/video_thumbnail.png)](https://www.youtube.com/watch?v=iINMUVll6TU "Youtube demo")
+
 # Setup
 
 ### Recommended  - Use docker compose
