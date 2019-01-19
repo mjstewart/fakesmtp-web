@@ -64,8 +64,8 @@ The `volumes` mapping for both containers is
 
 `~/fake-smtp-emails:/var/mail`
 
-You can read this as - Within each docker container, `/var/mail` is used to store emails which is mounted to the host
-directory `~/fake-smtp-emails`.
+You can read this as - Within the docker container, `/var/mail` is used to store emails which is mounted to the host
+directory `~/fake-smtp-emails`. **IMPORTANT**: Please ensure this directory has the correct permissions.
 
 This results in 
 - [docker-fakesmtp](https://github.com/munkyboy/docker-fakesmtp) writing emails into `~/fake-smtp-emails` 
@@ -275,6 +275,10 @@ For example, to change an emails `subject, read, replyTo` fields.
 ```
 
 # FAQ
+
+### You are not permitted to access this resource
+
+Confirm the volume directory on the host has the correct permissions. Such as read/write/execute.
 
 ### Will this only work in docker?
 
