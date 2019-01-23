@@ -93,7 +93,7 @@ inboxQuickActions : Email -> Html Msg
 inboxQuickActions email =
     div [ class "inbox-quick-actions" ]
         [ i
-            [ class "icon red trash outline clickable"
+            [ class "icon red trash alternate outline clickable"
             , onClick <| Msgs.DeleteEmail email.id
             , title "Delete"
             ]

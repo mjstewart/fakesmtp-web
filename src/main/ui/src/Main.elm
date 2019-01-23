@@ -293,7 +293,7 @@ inboxView emails selectedEmailId =
                                 ]
                         , if total > 0 then
                             H.button [ class "ui button mini", onClick (Msgs.DeleteAllEmails) ]
-                                [ H.i [ class "icon trash outline" ] []
+                                [ H.i [ class "icon trash alternate outline" ] []
                                 , H.text "Delete all"
                                 ]
                           else

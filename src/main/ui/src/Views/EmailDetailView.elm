@@ -45,7 +45,7 @@ quickActionView email =
                 )
             ]
         , H.button [ class "ui button mini", onClick (Msgs.DeleteEmail email.id) ]
-            [ H.i [ class "icon trash outline" ] []
+            [ H.i [ class "icon trash alternate outline" ] []
             , H.text "Delete"
             ]
         ]
@@ -122,7 +122,7 @@ getFromElement email =
 
 getToElement : Email -> Html Msg
 getToElement email =
-    case email.ccRecipients of
+    case email.toRecipients of
         [] ->
             H.text ""
 

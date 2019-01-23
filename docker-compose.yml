@@ -9,7 +9,7 @@ services:
     volumes:
       - ~/fake-smtp-emails:/var/mail
   fake-smtp-web:
-    image: mjstewart/fakesmtp-web:1.1
+    image: mjstewart/fakesmtp-web:1.2
     container_name: fake-smtp-web
     ports: 
       - "60500:8080"

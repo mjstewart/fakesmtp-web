@@ -64,8 +64,8 @@ module.exports = function (env) {
                         loader: 'file-loader',
                         options: {
                             limit: 10000,
-                            outputPath: 'img/',
-                            publicPath: publicPath,
+                            outputPath: '/img',
+                            publicPath: publicPath + '/img',
                             name: 'img-[hash:6].[name].[ext]',
                         },
                     },

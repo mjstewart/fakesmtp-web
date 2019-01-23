@@ -18,20 +18,16 @@ See [API](#API).
 
 ### Recommended  - Use docker compose
 
-Its recommended to use docker compose to simplify the setup.
-The default image is available on docker hub for convenience https://hub.docker.com/r/mjstewart/fakesmtp-web/
-
 1. copy and paste the projects `docker-compose.yml` file into an empty directory
 2. cd into the directory containing the `docker-compose.yml file`
 2. `docker-compose up -d`. 
 
 Open a browser and navigate to `http://localhost:60500` which will display the ui (it may take a minute to start up).
 
-See [API](#API) for rest endpoints. 
+- See [API](#API) for rest endpoints. 
  
-If you're deploying the container to a remote server or would just like to use a different IP address other than
-the default `http://localhost:60500` - see [API URL and port settings ](#API-URL-and-port-settings ) for a guide on how to manually build 
-a custom docker image with these changes.
+- See [API URL and port settings ](#API-URL-and-port-settings ) to change the IP and port.
+
 
 ### Without docker compose
 
@@ -65,8 +61,9 @@ The `volumes` mapping for both containers is
 `~/fake-smtp-emails:/var/mail`
 
 You can read this as - Within the docker container, `/var/mail` is used to store emails which is mounted to the host
-directory `~/fake-smtp-emails`. **IMPORTANT**: Please ensure this directory has the correct permissions.
-
+directory `~/fake-smtp-emails`. **IMPORTANT** - Please ensure the host directory `~/fake-smtp-emails` has the correct
+permissions such as non root owner and its writable. Both can be changed using `chown` and `chmod` respectively.
+ 
 This results in 
 - [docker-fakesmtp](https://github.com/munkyboy/docker-fakesmtp) writing emails into `~/fake-smtp-emails` 
 - [fakesmtp-web](https://github.com/mjstewart/fakesmtp-web) reading emails from `~/fake-smtp-emails`
@@ -85,7 +82,7 @@ Anything over 1 second is recommended to avoid potential issues in emails not ge
 ### API URL and port settings
 
 `http://localhost:60500` is used by default to prevent port clashes on the host machine. The docker port mappings must NOT
-be changed as the ui code contained within the docker image is hard coded with this port for convenience.
+be changed as the ui is a SPA (Single page application). This means webpack injects the API endpoints when the bundle is built.
 
 If you wish to deploy on a different IP and port, you'll have to manually build the project. 
 See [Build custom docker image](#Build-custom-docker-image)
@@ -107,6 +104,7 @@ updated to be the same.
 in `build.sh` to something unique.
 
     `docker build -t custom/fakesmtp-web .`
+    
 4. Run `./build.sh`
 
 See [FAQ](#FAQ) for non docker build instructions.
@@ -276,9 +274,13 @@ For example, to change an emails `subject, read, replyTo` fields.
 
 # FAQ
 
-### You are not permitted to access this resource
+### Network error, the server could be down or you are not permitted to access this resource.
 
-Confirm the volume directory on the host has the correct permissions. Such as read/write/execute.
+1. Confirm the volume directory on the host has the correct permissions. Such as read/write/execute and non root user.
+
+2. If you're running this on a remote server or docker in a VM such as on a mac or windows, its likely the default image cannot be
+used since the client javascript bundle has already been injected with the `localhost:60500` API endpoint. You will need to rebuild your own image using the docker ip
+on your machine - See [Build custom docker image](#Build-custom-docker-image)
 
 ### Will this only work in docker?
 
@@ -334,11 +336,13 @@ it into a pub/sub channel where 2 subscribers are waiting.
 
 - subscriber 2 emits the email through a server sent event stream for real time email updates.
 
-# Dev stuff
+### UI
+Since the UI is a SPA, it doesn't work so nicely with docker host:container port mappings since the javascript
+bundle has the API endpoints injected during the webpack build.
 
 webpack builds the elm bundle and assets into `resources/static` which is where spring boot serves static content by default.
-webpack also generates the ui entry point `index.html` in `resources/templates` where spring boot maps this to
-the root path `localhost:8080` by default.  
+webpack also generates the ui entry point `index.html` in `resources/templates` which spring boot serves up by default.
+
 
 `cd /src/main/ui`
 
