@@ -21,7 +21,7 @@ const ApiSettings = {
      * You need to build a new docker image supplying the FAKE_SMTP_WEB_API env variable corresponding to the server IP and port
      * the client should connect to. build.sh is used to build new images.
      */
-    productionApi: process.env.FAKE_SMTP_WEB_API || 'http://localhost:60500'
+    productionApi: 'http://xxxxx'
 }
 
 module.exports = function (env) {
