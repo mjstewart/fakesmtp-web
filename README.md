@@ -319,6 +319,27 @@ Run the jar maven created in the target folder of the project root directory.
 
 `java -jar target/fakesmtp-web-1.0.jar`
 
+# Set context path
+Step 1.
+When you want to set context path, you can do it for spring boot using `server.servlet.context-path` property.
+In addition you need to update the `FAKE_SMTP_WEB_API` variable.
+for example if you add context path as 
+`server.servlet.context-path=/mail`
+append the context to `FAKE_SMTP_WEB_API` as below
+`http://localhost:8080 -> http://localhost:8080/mail` 
+
+Same applies to port number as well.
+Note : for standalone(no docker) implementation we can keep same port number. 
+
+Step 2.
+Change `publicPath` in file below to update the context path. 
+src\main\ui\webpack.config.js
+for eg. if context path is `/mail` make change as 
+`const publicPath = (env === 'prod') ? '/ui/' : '/';`
+`const publicPath = (env === 'prod') ? '/mail/ui/' : '/';`
+
+Step 3.
+Recompile the application using step 3 mentioned above.
 
 # Implementation details
 - Spring Boot
