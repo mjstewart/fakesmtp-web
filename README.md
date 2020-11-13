@@ -315,9 +315,10 @@ mvn clean package -DskipTests
 
 Step 4. 
 
-Run the jar maven created in the target folder of the project root directory.
+Run the jar maven created in the target folder of the project root directory. 
+Specify the port you chose in FAKE_SMTP_WEB_API, eg 60500 using `-Dserver.port` option unless you use the default 8080.
 
-`java -jar target/fakesmtp-web-1.0.jar`
+`java -Dserver.port=60500 -jar target/fakesmtp-web-1.2.jar`
 
 # Set context path
 Step 1.
