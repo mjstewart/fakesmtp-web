@@ -45,9 +45,10 @@ If you need to change any configuration settings outlined in [Configuration](#Co
 for passing in environment variables is
 
 ```
-docker run --name fake-smtp-web -d -p 60500:8080 \
+docker run --name fake-smtp-web -d -p 10500:8080 \
 -v ~/fake-smtp-emails:/var/mail \ 
 -e EMAIL_INPUT_DIR_POLL_RATE_SECONDS=10 \
+-e FAKE_SMTP_WEB_API=http://localhost:10500 \
 mjstewart/fakesmtp-web:1.0
 ```
 
@@ -95,17 +96,15 @@ This behaviour can be changed by manually building a new docker image through th
 You will need yarn and maven installed on your system. Once installed, go to the project directory and
 execute the `build.sh` script.
 
-1. Optional - set server IP and port in `build.sh` using environment variable `FAKE_SMTP_WEB_API`
-
-2. If `FAKE_SMTP_WEB_API` is updated, the `fake-smtp-web` service in `docker-compose.yml` must have its port mappings
+1. If `FAKE_SMTP_WEB_API` is updated, the `fake-smtp-web` service in `docker-compose.yml` must have its port mappings
 updated to be the same. 
 
-3. To avoid the docker image name clashing with the existing image on docker hub, change the image name
+2. To avoid the docker image name clashing with the existing image on docker hub, change the image name
 in `build.sh` to something unique.
 
     `docker build -t custom/fakesmtp-web .`
     
-4. Run `./build.sh`
+3. Run `./build.sh`
 
 See [FAQ](#FAQ) for non docker build instructions.
 
@@ -298,7 +297,7 @@ computer for these variables to be updated or to `source ~/.bashrc` depending on
 
    - `EMAIL_INPUT_DIR_POLL_RATE_SECONDS=10`
 
-   - `FAKE_SMTP_WEB_API` (IP address and port the API will be deployed on, eg `http://localhost:60500`).
+   - `FAKE_SMTP_WEB_API=http://webserver:8080` (IP address and port the API will be deployed on, default `http://localhost:60500`).
 
 3. build
 
