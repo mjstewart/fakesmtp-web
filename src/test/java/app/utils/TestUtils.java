@@ -4,13 +4,12 @@ import app.domain.EmailMessage;
 import app.mailextractors.EmailExtractor;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class TestUtils {
-    public static EmailMessage createTestEmailOne() throws MessagingException {
+    public static EmailMessage createTestEmailOne() throws Exception {
         MimeMessage message = new MimeMessage(Session.getDefaultInstance(new Properties()));
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setFrom("test100@email.com");
@@ -21,7 +20,7 @@ public class TestUtils {
         return EmailExtractor.parse(message);
     }
 
-    public static EmailMessage createTestEmailTwo() throws MessagingException {
+    public static EmailMessage createTestEmailTwo() throws Exception {
         MimeMessage message = new MimeMessage(Session.getDefaultInstance(new Properties()));
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setFrom("test200@email.com");
@@ -33,7 +32,7 @@ public class TestUtils {
         return EmailExtractor.parse(message);
     }
 
-    public static EmailMessage createTestEmailThree() throws MessagingException {
+    public static EmailMessage createTestEmailThree() throws Exception {
         MimeMessage message = new MimeMessage(Session.getDefaultInstance(new Properties()));
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setFrom("test300@email.com");

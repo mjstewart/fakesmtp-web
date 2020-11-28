@@ -14,9 +14,9 @@ import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.*;
+import java.util.Properties;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class EmailExtractorTest {
 
@@ -24,9 +24,6 @@ public class EmailExtractorTest {
 
     private final String TEST_DOCUMENTS_PATH = "./test-data/";
     private final String TEST_EMAILS_PATH = "./test-data/eml/";
-
-    private final String INLINE = "inline";
-    private final String ATTACHMENT = "attachment";
 
     private Message createTestMessageWithAttachments() throws Exception {
         MimeMessage message = new MimeMessage(session);
@@ -94,13 +91,6 @@ public class EmailExtractorTest {
         out.close();
     }
 
-//    @Test
-//    public void setupTestDataFiles() throws Exception {
-//        createTestFileWithAttachments();
-//        createTestFileWithNoAttachments();
-//        createTestFileWithPlainTextBodyAndNoAttachments();
-//    }
-
     @Test
     public void getAllAttachments_EmailWithAttachments_FindsBodyAndAllAttachments() throws Exception {
         File withAttachments = new File(TEST_EMAILS_PATH + "with-attachments");
@@ -108,31 +98,27 @@ public class EmailExtractorTest {
         MimeMessage message = new MimeMessage(session, input);
         input.close();
 
-        Optional<BodyAttachment> result = EmailExtractor.getAllAttachments(message);
+        EmailMessage result = EmailExtractor.parse(message);
 
         assertThat(result).isNotNull();
-        assertThat(result.isPresent()).isTrue();
-        assertThat(result.get().getBody().isPresent()).isTrue();
-        assertThat(result.get().getBody().get()).isEqualTo(new Body(
+        assertThat(result.getBody()).isEqualTo(new Body(
                 "<html><body><h1>Hi there with attachments</h1></body></html>",
-                new ContentType(MediaType.TEXT_HTML_VALUE, "UTF-8")
+                new ContentType(MediaType.TEXT_HTML_VALUE)
         ));
 
-        assertThat(result.get().getAttachments()).isNotNull();
-        assertThat(result.get().getAttachments())
+        assertThat(result.getAttachments())
                 .usingElementComparator(EmailAttachment.excludeIdComparator())
                 .containsExactlyInAnyOrder(
-                        new EmailAttachment("house", INLINE,
-                                new ContentType(MediaType.IMAGE_PNG_VALUE, null)),
+                        new EmailAttachment(null, new ContentType(MediaType.IMAGE_PNG_VALUE)),
 
-                        new EmailAttachment("styles", INLINE,
-                                new ContentType("text/css", "us-ascii")),
+                        new EmailAttachment(null,
+                                new ContentType("text/css")),
 
-                        new EmailAttachment("list.txt", ATTACHMENT,
-                                new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii")),
+                        new EmailAttachment("list.txt",
+                                new ContentType(MediaType.TEXT_PLAIN_VALUE)),
 
-                        new EmailAttachment("notes.txt", ATTACHMENT,
-                                new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii"))
+                        new EmailAttachment("notes.txt",
+                                new ContentType(MediaType.TEXT_PLAIN_VALUE))
                 );
     }
 
@@ -143,17 +129,15 @@ public class EmailExtractorTest {
         MimeMessage message = new MimeMessage(session, input);
         input.close();
 
-        Optional<BodyAttachment> result = EmailExtractor.getAllAttachments(message);
+        EmailMessage result = EmailExtractor.parse(message);
 
         assertThat(result).isNotNull();
-        assertThat(result.isPresent()).isTrue();
-        assertThat(result.get().getBody().isPresent()).isTrue();
-        assertThat(result.get().getBody().get()).isEqualTo(new Body(
+        assertThat(result.getBody()).isEqualTo(new Body(
                 "<html><body><h1>Hi there with no attachments</h1></body></html>",
-                new ContentType(MediaType.TEXT_HTML_VALUE, "UTF-8")
+                new ContentType(MediaType.TEXT_HTML_VALUE)
         ));
 
-        assertThat(result.get().getAttachments()).isEmpty();
+        assertThat(result.getAttachments()).isEmpty();
     }
 
     @Test
@@ -169,7 +153,7 @@ public class EmailExtractorTest {
         assertThat(meta.getFromWho()).containsExactlyInAnyOrder("test@email.com");
         assertThat(meta.getBody()).isEqualTo(new Body(
                 "<html><body><h1>Hi there with attachments</h1></body></html>",
-                new ContentType(MediaType.TEXT_HTML_VALUE, "UTF-8")
+                new ContentType(MediaType.TEXT_HTML_VALUE)
         ));
         assertThat(meta.getToRecipients()).containsExactlyInAnyOrder("person1@email.com", "person2@Email.com");
         assertThat(meta.getCcRecipients()).containsExactlyInAnyOrder("me1@email.com", "me2@email.com");
@@ -182,18 +166,18 @@ public class EmailExtractorTest {
         assertThat(meta.getAttachments())
                 .usingElementComparator(EmailAttachment.excludeIdComparator())
                 .containsExactlyInAnyOrder(
-                new EmailAttachment("house", INLINE,
-                        new ContentType(MediaType.IMAGE_PNG_VALUE, null)),
+                        new EmailAttachment(null,
+                                new ContentType(MediaType.IMAGE_PNG_VALUE)),
 
-                new EmailAttachment("styles", INLINE,
-                        new ContentType("text/css", "us-ascii")),
+                        new EmailAttachment(null,
+                                new ContentType("text/css")),
 
-                new EmailAttachment("list.txt", ATTACHMENT,
-                        new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii")),
+                        new EmailAttachment("list.txt",
+                                new ContentType(MediaType.TEXT_PLAIN_VALUE)),
 
-                new EmailAttachment("notes.txt", ATTACHMENT,
-                        new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii"))
-        );
+                        new EmailAttachment("notes.txt",
+                                new ContentType(MediaType.TEXT_PLAIN_VALUE))
+                );
     }
 
     @Test
@@ -209,7 +193,7 @@ public class EmailExtractorTest {
         assertThat(meta.getFromWho()).containsExactlyInAnyOrder("test@email.com");
         assertThat(meta.getBody()).isEqualTo(new Body(
                 "Hi there this is a plain text body",
-                new ContentType(MediaType.TEXT_PLAIN_VALUE, "UTF-8")
+                new ContentType(MediaType.TEXT_PLAIN_VALUE)
         ));
         assertThat(meta.getToRecipients()).containsExactlyInAnyOrder("person1@email.com", "person2@Email.com");
         assertThat(meta.getCcRecipients()).isEmpty();
@@ -273,7 +257,7 @@ public class EmailExtractorTest {
                         "</div>\n" +
                         "</body>\n" +
                         "</html>",
-                new ContentType(MediaType.TEXT_HTML_VALUE, "utf-8")
+                new ContentType(MediaType.TEXT_HTML_VALUE)
         ));
 
         assertThat(meta.getId()).isNotNull();
@@ -295,7 +279,7 @@ public class EmailExtractorTest {
         MimeMessage message = new MimeMessage(session, input);
         input.close();
 
-        // Expect all values that are in fakeSMTP-generated-no-attachments.eml
+        // Expect all values that are in fakeSMTP-generated-with-attachments.eml
         EmailMessage meta = EmailExtractor.parse(message);
 
         assertThat(meta.getBody()).isEqualTo(new Body(
@@ -321,7 +305,7 @@ public class EmailExtractorTest {
                         "</div>\n" +
                         "</body>\n" +
                         "</html>",
-                new ContentType(MediaType.TEXT_HTML_VALUE, "utf-8")
+                new ContentType(MediaType.TEXT_HTML_VALUE)
         ));
 
         assertThat(meta.getId()).isNotNull();
@@ -336,58 +320,15 @@ public class EmailExtractorTest {
         assertThat(meta.getAttachments())
                 .usingElementComparator(EmailAttachment.excludeIdComparator())
                 .containsExactlyInAnyOrder(
-                new EmailAttachment("styles", INLINE,
-                        new ContentType("text/css", "us-ascii")),
+                        new EmailAttachment(null,
+                                new ContentType("text/css")),
 
-                new EmailAttachment("dummy", INLINE,
-                        new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii")),
+                        new EmailAttachment("styles.css",
+                                new ContentType("text/css")),
 
-                new EmailAttachment("styles.css", ATTACHMENT,
-                        new ContentType("text/css", "us-ascii")),
-
-                new EmailAttachment("notes.txt", ATTACHMENT,
-                        new ContentType(MediaType.TEXT_PLAIN_VALUE, "us-ascii"))
-        );
-    }
-
-    @Test
-    public void isNotEmpty_IsTrueWhenNotEmpty() {
-        Object[] numbers = {1, 2, 3};
-        assertThat(EmailExtractor.isNotEmpty(numbers)).isTrue();
-    }
-
-    @Test
-    public void isNotEmpty_IsFalseWhenEmpty() {
-        Object[] numbers = {};
-        assertThat(EmailExtractor.isNotEmpty(numbers)).isFalse();
-    }
-
-    @Test
-    public void removeAngleBrackets() {
-        assertThat(EmailExtractor.removeAngleBrackets("")).isEqualTo("");
-        assertThat(EmailExtractor.removeAngleBrackets("hello")).isEqualTo("hello");
-        assertThat(EmailExtractor.removeAngleBrackets("<hello>")).isEqualTo("hello");
-    }
-
-    @Test
-    public void parseContentType() {
-        assertThat(EmailExtractor.parseContentType("text/plain"))
-                .isEqualTo(new ContentType("text/plain"));
-
-        assertThat(EmailExtractor.parseContentType("text/plain; charset=us-ascii"))
-                .isEqualTo(new ContentType("text/plain", "us-ascii"));
-
-        assertThat(EmailExtractor.parseContentType("text/plain; charset=UTF-8; name=hello; type=important"))
-                .isEqualTo(new ContentType("text/plain", "UTF-8"));
-
-        assertThat(EmailExtractor.parseContentType("text/plain; blah=us-ascii; name=hello; type=important"))
-                .isEqualTo(new ContentType("text/plain"));
-
-        // The method shouldn't worry about the media type being valid or not.
-        assertThat(EmailExtractor.parseContentType("blah"))
-                .isEqualTo(new ContentType("blah"));
-
-        assertThat(EmailExtractor.parseContentType("")).isNull();
+                        new EmailAttachment("notes.txt",
+                                new ContentType(MediaType.TEXT_PLAIN_VALUE))
+                );
     }
 
     @Test

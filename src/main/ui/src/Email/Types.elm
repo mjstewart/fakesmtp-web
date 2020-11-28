@@ -33,14 +33,12 @@ type alias EmailBody =
 type alias EmailAttachment =
     { id : String
     , fileName : Maybe String
-    , disposition : Maybe String
     , contentType : Maybe ContentType
     }
 
 
 type alias ContentType =
     { mediaType : Maybe String
-    , charset : Maybe String
     }
 
 

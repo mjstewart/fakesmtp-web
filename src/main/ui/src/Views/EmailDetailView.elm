@@ -228,13 +228,6 @@ getAttachmentView attachment =
     H.div [ class "email-detail-attachment" ]
         [ H.div [ class "header" ]
             [ H.i [ class "attach icon" ] []
-            , (case attachment.disposition of
-                Nothing ->
-                    H.text ""
-
-                Just disposition ->
-                    H.p [ class "subtle-text" ] [ H.text disposition ]
-              )
             ]
         , H.div [ class "body" ]
             [ (case attachment.fileName of
@@ -265,12 +258,6 @@ getAttachmentContentTypeView attachment =
 
                     Just mediaType ->
                         H.p [ class "subtle-text" ] [ H.text mediaType ]
-                , case contentType.charset of
-                    Nothing ->
-                        H.p [ class "subtle-text" ] [ H.text "No charset" ]
-
-                    Just charset ->
-                        H.p [ class "subtle-text" ] [ H.text charset ]
                 ]
 
 
@@ -332,10 +319,4 @@ getContentTypeView maybeContentType =
 
                     Just mediaType ->
                         H.p [ class "subtle-text" ] [ H.text mediaType ]
-                , case contentType.charset of
-                    Nothing ->
-                        H.p [ class "subtle-text" ] [ H.text "No charset" ]
-
-                    Just charset ->
-                        H.p [ class "subtle-text" ] [ H.text charset ]
                 ]

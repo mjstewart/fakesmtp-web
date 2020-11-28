@@ -38,10 +38,8 @@ suite =
                         {
                           "id": "ff84c957-911f-49d2-8675-79baf7c85fcc",
                           "fileName": "notes.txt",
-                          "disposition": "attachment",
                            "contentType": {
-                          "mediaType": "text/plain",
-                          "charset": "us-ascii"
+                          "mediaType": "text/plain"
                            }
                         }
                         """
@@ -50,8 +48,7 @@ suite =
                     expect =
                         { id = "ff84c957-911f-49d2-8675-79baf7c85fcc"
                         , fileName = Just "notes.txt"
-                        , disposition = Just "attachment"
-                        , contentType = Just { mediaType = Just "text/plain", charset = Just "us-ascii" }
+                        , contentType = Just { mediaType = Just "text/plain" }
                         }
 
                     actual : Result String EmailAttachment
@@ -67,7 +64,6 @@ suite =
                         {
                           "id": "ff84c957-911f-49d2-8675-79baf7c85fcc",
                           "fileName": null,
-                          "disposition": null,
                            "contentType": null
                         }
                         """
@@ -76,7 +72,6 @@ suite =
                     expect =
                         { id = "ff84c957-911f-49d2-8675-79baf7c85fcc"
                         , fileName = Nothing
-                        , disposition = Nothing
                         , contentType = Nothing
                         }
 
@@ -91,15 +86,13 @@ suite =
                     json =
                         """
                         {
-                          "mediaType": "text/plain",
-                          "charset": "us-ascii"
+                          "mediaType": "text/plain"
                         }
                         """
 
                     expect : ContentType
                     expect =
                         { mediaType = Just "text/plain"
-                        , charset = Just "us-ascii"
                         }
 
                     actual : Result String ContentType
@@ -113,15 +106,13 @@ suite =
                     json =
                         """
                         {
-                          "mediaType": null,
-                          "charset": null
+                          "mediaType": null
                         }
                         """
 
                     expect : ContentType
                     expect =
                         { mediaType = Nothing
-                        , charset = Nothing
                         }
 
                     actual : Result String ContentType
@@ -137,8 +128,7 @@ suite =
                         {
                           "content": "hello world",
                           "contentType": {
-                              "mediaType": "text/plain",
-                              "charset": "utf-8"
+                              "mediaType": "text/plain"
                           }
                         }
                         """
@@ -149,7 +139,6 @@ suite =
                         , contentType =
                             Just
                                 { mediaType = Just "text/plain"
-                                , charset = Just "utf-8"
                                 }
                         }
 
@@ -194,8 +183,7 @@ suite =
                             "body": {
                                 "content": "<h1>hello there</h1>",
                                 "contentType": {
-                                    "mediaType": "text/html",
-                                    "charset": "utf-8"
+                                    "mediaType": "text/html"
                                 }
                             },
                             "receivedDate": "2017-12-25T17:25:34",
@@ -216,19 +204,15 @@ suite =
                                 {
                                     "id": "ff84c957-911f-49d2-8675-79baf7c85fcc",
                                     "fileName": "notes.txt",
-                                    "disposition": "attachment",
                                     "contentType": {
                                         "mediaType": "text/plain",
-                                        "charset": "us-ascii"
                                     }
                                 },
                                 {
                                     "id": "95104391-0acf-49dc-b997-3dcaad5e6273",
                                     "fileName": "styles.css",
-                                    "disposition": "attachment",
                                     "contentType": {
-                                        "mediaType": "text/css",
-                                        "charset": "us-ascii"
+                                        "mediaType": "text/css"
                                     }
                                 }
                             ],
@@ -259,7 +243,6 @@ suite =
                                 , contentType =
                                     Just
                                         { mediaType = Just "text/html"
-                                        , charset = Just "utf-8"
                                         }
                                 }
                         , receivedDate = Just "2017-12-25T17:25:34"
@@ -271,20 +254,16 @@ suite =
                         , attachments =
                             [ { id = "ff84c957-911f-49d2-8675-79baf7c85fcc"
                               , fileName = Just "notes.txt"
-                              , disposition = Just "attachment"
                               , contentType =
                                     Just
                                         { mediaType = Just "text/plain"
-                                        , charset = Just "us-ascii"
                                         }
                               }
                             , { id = "95104391-0acf-49dc-b997-3dcaad5e6273"
                               , fileName = Just "styles.css"
-                              , disposition = Just "attachment"
                               , contentType =
                                     Just
                                         { mediaType = Just "text/css"
-                                        , charset = Just "us-ascii"
                                         }
                               }
                             ]

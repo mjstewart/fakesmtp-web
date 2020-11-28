@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * A simple type to pass the email body and attachments around.
- */
 public class BodyAttachment {
     private Body body;
     private List<EmailAttachment> attachments;

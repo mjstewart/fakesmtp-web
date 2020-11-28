@@ -9,11 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
-import org.springframework.integration.dsl.ConsumerEndpointSpec;
-import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.dsl.Pollers;
-import org.springframework.integration.dsl.channel.MessageChannels;
+import org.springframework.integration.dsl.*;
 import org.springframework.integration.file.FileHeaders;
 import org.springframework.integration.file.dsl.Files;
 import org.springframework.integration.handler.LoggingHandler;
@@ -67,7 +63,6 @@ public class EmailIntegration {
      * would be a unique token issued by the server on sign in or a JWT token etc.
      *
      * <p>https://stackoverflow.com/questions/34530544/java-spring-sseemitter-responsebodyemitter-detect-browser-reloads
-     *
      */
     @GetMapping(value = "/api/stream/emails/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter emailStream(@PathVariable("id") String id) {

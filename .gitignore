@@ -28,3 +28,4 @@ node_modules
 tests/elm-stuff
 **/resources/static/ui/*
 **/resources/templates/index.html
+**/yarn.lock

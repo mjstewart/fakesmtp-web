@@ -37,17 +37,14 @@ decodeEmailBody =
 
 decodeContentType : Decoder ContentType
 decodeContentType =
-    Decode.map2 ContentType
+    Decode.map ContentType
         (Decode.field "mediaType" <| Decode.maybe Decode.string)
-        (Decode.field "charset" <| Decode.maybe Decode.string)
-
 
 decodeAttachment : Decoder EmailAttachment
 decodeAttachment =
-    Decode.map4 EmailAttachment
+    Decode.map3 EmailAttachment
         (Decode.field "id" Decode.string)
         (Decode.field "fileName" <| Decode.maybe Decode.string)
-        (Decode.field "disposition" <| Decode.maybe Decode.string)
         (Decode.field "contentType" <| Decode.maybe decodeContentType)
 
 

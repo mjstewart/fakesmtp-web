@@ -4,27 +4,25 @@ import org.junit.Test;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class EmailAttachmentTest {
     @Test
     public void excludeIdComparator_handlesNullFields() {
-        // Expect ordering to be by fileName, disposition, contentType.mediaType then contentType.charset.
+        // Expect ordering to be by fileName, contentType.mediaType
         // nulls are stored last.
         Comparator<EmailAttachment> comp = EmailAttachment.excludeIdComparator();
 
-        EmailAttachment a = new EmailAttachment("a", "a", new ContentType("a", "a"));
-        EmailAttachment b = new EmailAttachment("a", "a", new ContentType("a", "b"));
-        EmailAttachment c = new EmailAttachment("a", "a", new ContentType("b", "b"));
-        EmailAttachment d = new EmailAttachment("a", "b", new ContentType("b", "b"));
-        EmailAttachment e = new EmailAttachment("b", "b", new ContentType("b", "b"));
-        EmailAttachment f = new EmailAttachment("c", "b", new ContentType("b", "b"));
-        EmailAttachment g = new EmailAttachment("c", "b", null);
-        EmailAttachment h = new EmailAttachment("c", null, null);
-        EmailAttachment i = new EmailAttachment(null, null, null);
+        EmailAttachment a = new EmailAttachment("a", new ContentType("a"));
+        EmailAttachment b = new EmailAttachment("a", new ContentType("a1"));
+        EmailAttachment c = new EmailAttachment("a", new ContentType("b"));
+        EmailAttachment f = new EmailAttachment("b", new ContentType("b2"));
+        EmailAttachment g = new EmailAttachment("c", new ContentType("c2"));
+        EmailAttachment h = new EmailAttachment("c", null);
+        EmailAttachment i = new EmailAttachment(null, null);
 
-        List<EmailAttachment> expect = new ArrayList<>(Arrays.asList(a, b, c, d, e, f, g, h, i));
-        List<EmailAttachment> attachments = new ArrayList<>(Arrays.asList(a, b, c, d, e, f, g, h, i));
+        List<EmailAttachment> expect = new ArrayList<>(Arrays.asList(a, b, c, f, g, h, i));
+        List<EmailAttachment> attachments = new ArrayList<>(Arrays.asList(a, b, c, f, g, h, i));
 
         Collections.shuffle(attachments);
         attachments.sort(comp);
@@ -36,7 +34,5 @@ public class EmailAttachmentTest {
         assertThat(attachments.get(4).getId()).isEqualTo(expect.get(4).getId());
         assertThat(attachments.get(5).getId()).isEqualTo(expect.get(5).getId());
         assertThat(attachments.get(6).getId()).isEqualTo(expect.get(6).getId());
-        assertThat(attachments.get(7).getId()).isEqualTo(expect.get(7).getId());
-        assertThat(attachments.get(8).getId()).isEqualTo(expect.get(8).getId());
     }
 }

@@ -12,21 +12,20 @@ import java.util.UUID;
 public class EmailAttachment {
     @Id
     private UUID id;
-    
+
     private String fileName;
-    private String disposition;
     private ContentType contentType;
 
-    public EmailAttachment() {}
-
-    public EmailAttachment(String fileName, String disposition, ContentType contentType) {
-        this(UUID.randomUUID(), fileName, disposition, contentType);
+    public EmailAttachment() {
     }
-    
-    public EmailAttachment(UUID id, String fileName, String disposition, ContentType contentType) {
+
+    public EmailAttachment(String fileName, ContentType contentType) {
+        this(UUID.randomUUID(), fileName, contentType);
+    }
+
+    public EmailAttachment(UUID id, String fileName, ContentType contentType) {
         this.id = id;
         this.fileName = fileName;
-        this.disposition = disposition;
         this.contentType = contentType;
     }
 
@@ -37,11 +36,6 @@ public class EmailAttachment {
     @Nullable
     public String getFileName() {
         return fileName;
-    }
-
-    @Nullable
-    public String getDisposition() {
-        return disposition;
     }
 
     @Nullable
@@ -66,7 +60,7 @@ public class EmailAttachment {
      * Compare all fields excluding {@code id, attachmentId}. Useful for testing when the
      * attachmentId is not known.
      *
-     * <p>By fileName, disposition, contentType.mediaType then contentType.charset.
+     * <p>By fileName, contentType.mediaType
      * nulls are stored last.</p>
      */
     public static Comparator<EmailAttachment> excludeIdComparator() {
@@ -75,12 +69,10 @@ public class EmailAttachment {
         Comparator<EmailAttachment> contentTypeComparator =
                 Comparator.comparing(EmailAttachment::getContentType, Comparator.nullsLast(
                         Comparator.comparing(ContentType::getMediaType, compareSafeString)
-                                .thenComparing(ContentType::getCharset, compareSafeString)
                 ));
 
         return Comparator
                 .comparing(EmailAttachment::getFileName, compareSafeString)
-                .thenComparing(EmailAttachment::getDisposition, compareSafeString)
                 .thenComparing(contentTypeComparator);
     }
 
@@ -89,7 +81,6 @@ public class EmailAttachment {
         return "EmailAttachment{" +
                 "id=" + id +
                 ", fileName='" + fileName + '\'' +
-                ", disposition='" + disposition + '\'' +
                 ", contentType=" + contentType +
                 '}';
     }

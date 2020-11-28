@@ -139,7 +139,6 @@ suite =
                             , contentType =
                                 Just
                                     { mediaType = Just "text/plain"
-                                    , charset = Just "us-ascii"
                                     }
                             }
                     in
@@ -153,7 +152,6 @@ suite =
                             , contentType =
                                 Just
                                     { mediaType = Just "text/plain"
-                                    , charset = Just "us-ascii"
                                     }
                             }
                     in

@@ -1,9 +1,9 @@
 package app.domain;
 
+import app.configuration.jackson.JacksonConfiguration;
 import app.mailextractors.Body;
 import app.mailextractors.ContentType;
 import app.mailextractors.EmailAttachment;
-import app.configuration.jackson.JacksonConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @Import(JacksonConfiguration.class)
@@ -44,16 +44,16 @@ public class EmailMessageJsonTest {
                 .bccRecipients(new HashSet<>())
                 .description("a test email description")
                 .sentDate(sentDate)
-                .body(new Body(body, new ContentType(MediaType.TEXT_HTML_VALUE, "utf-8")))
+                .body(new Body(body, new ContentType(MediaType.TEXT_HTML_VALUE)))
                 .attachments(new HashSet<>(Arrays.asList(
-                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe100"), "style", "inline",
-                                new ContentType("text/css", "utf-8")),
-                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe101"), "house", "inline",
-                                new ContentType(MediaType.IMAGE_JPEG_VALUE, null)),
-                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe102"), "notes.txt", "attachment",
-                                new ContentType(MediaType.TEXT_PLAIN_VALUE, "utf-8")),
-                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe103"), "sales.pdf", "attachment",
-                                new ContentType(MediaType.APPLICATION_PDF_VALUE, null))
+                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe100"), "style",
+                                new ContentType("text/css")),
+                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe101"), "house",
+                                new ContentType(MediaType.IMAGE_JPEG_VALUE)),
+                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe102"), "notes.txt",
+                                new ContentType(MediaType.TEXT_PLAIN_VALUE)),
+                        new EmailAttachment(UUID.fromString("ff92e909-aafd-4ee2-affe-ecf631efe103"), "sales.pdf",
+                                new ContentType(MediaType.APPLICATION_PDF_VALUE))
                 )))
                 .create();
 

@@ -1,8 +1,8 @@
 package app.domain;
 
+import app.mailextractors.Body;
 import app.mailextractors.EmailAttachment;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import app.mailextractors.Body;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -13,10 +13,6 @@ import java.util.*;
         @AttributeOverride(
                 name = "body.contentType.mediaType",
                 column = @Column(name = "body_content_media_type")
-        ),
-        @AttributeOverride(
-                name = "body.contentType.charset",
-                column = @Column(name = "body_content_charset")
         )
 })
 public class EmailMessage {

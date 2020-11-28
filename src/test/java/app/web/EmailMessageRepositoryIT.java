@@ -3,43 +3,36 @@ package app.web;
 import app.domain.EmailMessage;
 import app.mailextractors.EmailExtractor;
 import app.utils.TestUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.data.domain.Sort;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
-import org.springframework.hateoas.mvc.TypeReferences;
-import org.springframework.http.*;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.core.TypeReferences;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
-import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
-import java.util.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Properties;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -62,7 +55,7 @@ public class EmailMessageRepositoryIT {
     }
 
     @Test
-    public void findAll_SortsBySentDateCorrectly() throws MessagingException {
+    public void findAll_SortsBySentDateCorrectly() throws Exception {
         MimeMessage message1 = new MimeMessage(Session.getDefaultInstance(new Properties()));
         MimeMessageHelper helper1 = new MimeMessageHelper(message1, true, "UTF-8");
         helper1.setFrom("firstEmail@email.com");
@@ -100,9 +93,9 @@ public class EmailMessageRepositoryIT {
         repository.save(firstEmail);
         repository.save(secondEmail);
 
-        ResponseEntity<Resources<EmailMessage>> result = restTemplate.exchange("/api/emails?sort=sentDate,desc",
+        ResponseEntity<CollectionModel<EmailMessage>> result = restTemplate.exchange("/api/emails?sort=sentDate,desc",
                 HttpMethod.GET, null,
-                new TypeReferences.ResourcesType<EmailMessage>() {
+                new TypeReferences.CollectionModelType<EmailMessage>() {
                 });
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -116,9 +109,9 @@ public class EmailMessageRepositoryIT {
         repository.save(firstEmail);
         repository.save(secondEmail);
 
-        ResponseEntity<Resource<Void>> result = restTemplate.exchange("/api/emails/actions",
+        ResponseEntity<EntityModel<Void>> result = restTemplate.exchange("/api/emails/actions",
                 HttpMethod.DELETE, null,
-                new TypeReferences.ResourceType<Void>() {
+                new TypeReferences.EntityModelType<Void>() {
                 });
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -133,9 +126,9 @@ public class EmailMessageRepositoryIT {
         repository.save(secondEmail);
 
         // Uses Spring data rest endpoint on single resource
-        ResponseEntity<Resource<Void>> result = restTemplate.exchange("/api/emails/" + firstEmail.getId().toString(),
+        ResponseEntity<EntityModel<Void>> result = restTemplate.exchange("/api/emails/" + firstEmail.getId().toString(),
                 HttpMethod.DELETE, null,
-                new TypeReferences.ResourceType<Void>() {
+                new TypeReferences.EntityModelType<Void>() {
                 });
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -160,9 +153,9 @@ public class EmailMessageRepositoryIT {
         body.put("read", false);
 
         // Uses Spring data rest endpoint on single resource
-        ResponseEntity<Resource<EmailMessage>> result = restTemplate.exchange("/api/emails/" + firstEmail.getId().toString(),
+        ResponseEntity<EntityModel<EmailMessage>> result = restTemplate.exchange("/api/emails/" + firstEmail.getId().toString(),
                 HttpMethod.PATCH, new HttpEntity<>(body),
-                new TypeReferences.ResourceType<EmailMessage>() {
+                new TypeReferences.EntityModelType<EmailMessage>() {
                 });
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -182,9 +175,9 @@ public class EmailMessageRepositoryIT {
         body.put("read", false);
 
         // Uses Spring data rest endpoint on single resource
-        ResponseEntity<Resource<EmailMessage>> result = restTemplate.exchange("/api/emails/" + firstEmail.getId().toString(),
+        ResponseEntity<EntityModel<EmailMessage>> result = restTemplate.exchange("/api/emails/" + firstEmail.getId().toString(),
                 HttpMethod.PATCH, new HttpEntity<>(body),
-                new TypeReferences.ResourceType<EmailMessage>() {
+                new TypeReferences.EntityModelType<EmailMessage>() {
                 });
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);

@@ -1,11 +1,11 @@
 # Web support for FakeSMTP running in docker
 
-The original project [FakeSMTP](https://github.com/Nilhcem/FakeSMTP) offers a GUI in java swing which is fine if you
+The original project [FakeSMTP](https://github.com/Nilhcem/FakeSMTP) uses a java swing GUI which is fine if you
 want something basic and don't wish to use docker.
 
-This project provides web support for FakeSMTP running in docker with the following features
+This project provides web support for [FakeSMTP](https://github.com/Nilhcem/FakeSMTP)  running in docker with the following features
 - rest api supporting common crud operations
-- new emails are published to a server sent event stream
+- server sent events for 'real time' email detection
 - web ui written in elm
 
 The rest api produces email data modelled from a [MimeMessage](https://docs.oracle.com/javaee/7/api/javax/mail/internet/MimeMessage.html)
@@ -18,11 +18,20 @@ See [API](#API).
 
 ### Recommended  - Use docker compose
 
-1. copy and paste the projects `docker-compose.yml` file into an empty directory
-2. cd into the directory containing the `docker-compose.yml file`
+1. Within this repository, copy and paste the `docker-compose.yml` file into an empty directory on your local machine.
+2. cd into the directory containing this `docker-compose.yml` file
 2. `docker-compose up -d`. 
 
 Open a browser and navigate to `http://localhost:60500` which will display the ui (it may take a minute to start up).
+
+To start with, its likely no emails will show up in the UI. The `docker-compose.yml` contains a `volumes` section. By default, any emails added to
+`~/fake-smtp-emails` on your local machine will be visible on the UI. Feel free to change this to whatever you like!
+
+```
+    volumes:
+      - ~/fake-smtp-emails:/var/mail
+```
+
 
 - See [API](#API) for rest endpoints. 
  
@@ -37,9 +46,9 @@ If you don't wish to use docker compose, you'll need to start each container ind
 
 `docker run --name fake-smtp -d -p 25:25 -v ~/fake-smtp-emails:/var/mail munkyboy/fakesmtp`
  
-2 - Start the fakesmtp-web container (Note: the host port must be 60500, see [Configuration](#Configuration))
+2 - Start the fakesmtp-web container (Note: the host port must be `60500`, see [Configuration](#Configuration))
 
-`docker run --name fake-smtp-web -d -p 60500:8080 -v ~/fake-smtp-emails:/var/mail mjstewart/fakesmtp-web:1.0`
+`docker run --name fake-smtp-web -d -p 60500:8080 -v ~/fake-smtp-emails:/var/mail mjstewart/fakesmtp-web:1.3`
 
 If you need to change any configuration settings outlined in [Configuration](#Configuration), the docker syntax
 for passing in environment variables is
@@ -48,7 +57,7 @@ for passing in environment variables is
 docker run --name fake-smtp-web -d -p 60500:8080 \
 -v ~/fake-smtp-emails:/var/mail \ 
 -e EMAIL_INPUT_DIR_POLL_RATE_SECONDS=10 \
-mjstewart/fakesmtp-web:1.0
+mjstewart/fakesmtp-web:1.3
 ```
 
 # Configuration
@@ -77,7 +86,7 @@ If you want a different host directory, be sure to change both volumes for each 
 `~/fake-smtp-emails` is polled every 10 seconds to check for new emails. 
 This can be changed by setting `EMAIL_INPUT_DIR_POLL_RATE_SECONDS`.
 
-Anything over 1 second is recommended to avoid potential issues in emails not getting parsed correctly.
+I would recommend this over 1 second to avoid potential issues in emails not getting parsed correctly.
 
 ### API URL and port settings
 
@@ -90,12 +99,28 @@ See [Build custom docker image](#Build-custom-docker-image)
 # Build custom docker image
 
 By default, `http://localhost:60500` is the server IP and port the application is accessible on.
+ 
 This behaviour can be changed by manually building a new docker image through the following steps.
   
-You will need yarn and maven installed on your system. Once installed, go to the project directory and
+You will need `yarn` and `maven` installed on your system. Once installed, go to the project directory and
 execute the `build.sh` script.
 
-1. Optional - set server IP and port in `build.sh` using environment variable `FAKE_SMTP_WEB_API`
+Note: Since you're building a custom image yourself, feel free to remove my image name in any of the docker steps
+
+Instead of this
+
+```
+docker build -t mjstewart/fakesmtp-web:1.3 .
+```
+
+you might like to change it to your name (this will also avoid any name collisions with an existing image off dockerhub)
+
+```
+docker build -t alice/fakesmtp-web:1.0 .
+```
+
+1. Optional - set server IP and port in `build.sh` using environment variable `FAKE_SMTP_WEB_API`. I don't really know 
+of a usecase but I suppose if you were running this on a remote machine it could be useful? 
 
 2. If `FAKE_SMTP_WEB_API` is updated, the `fake-smtp-web` service in `docker-compose.yml` must have its port mappings
 updated to be the same. 
@@ -108,6 +133,10 @@ in `build.sh` to something unique.
 4. Run `./build.sh`
 
 See [FAQ](#FAQ) for non docker build instructions.
+
+**Note** I apologise for this ceremony of having to build a new image just for a port change, if there is a better way please 
+let me know.
+
 
 # API
 
@@ -133,8 +162,6 @@ ordered from newest to oldest.
 
 - All string fields should be considered optional and may return null depending on the email parsing.
 - Arrays are always empty if there's no data rather than null.
-- Attachment disposition 'inline' refers to content belonging to the email body. Disposition 'attachment' is an explicit
-attachment added to the email like a pdf file or something.
 
 ```$json
 {
@@ -149,8 +176,7 @@ attachment added to the email like a pdf file or something.
                 "body": {
                     "content": "some html string here",
                     "contentType": {
-                        "mediaType": "text/html",
-                        "charset": "utf-8"
+                        "mediaType": "text/html"
                     }
                 },
                 "receivedDate": null,
@@ -165,37 +191,29 @@ attachment added to the email like a pdf file or something.
                     {
                         "id": "d81dcf50-cb89-4cd2-b348-d41215020513",
                         "fileName": "styles.css",
-                        "disposition": "attachment",
                         "contentType": {
-                            "mediaType": "text/css",
-                            "charset": "us-ascii"
+                            "mediaType": "text/css"
                         }
                     },
                     {
                         "id": "f4bc2c82-7dad-40f4-9ae1-f102525cb525",
                         "fileName": "notes.txt",
-                        "disposition": "attachment",
                         "contentType": {
                             "mediaType": "text/plain",
-                            "charset": "us-ascii"
                         }
                     },
                     {
                         "id": "62edda6b-7d67-4c43-8093-4af029c19e0f",
                         "fileName": "menu",
-                        "disposition": "inline",
                         "contentType": {
-                            "mediaType": "text/plain",
-                            "charset": "us-ascii"
+                            "mediaType": "text/plain"
                         }
                     },
                     {
                         "id": "86495017-7988-496c-8e3b-b8d597e91853",
                         "fileName": "styles",
-                        "disposition": "inline",
                         "contentType": {
-                            "mediaType": "text/css",
-                            "charset": "us-ascii"
+                            "mediaType": "text/css"
                         }
                     }
                 ],
@@ -302,45 +320,57 @@ computer for these variables to be updated or to `source ~/.bashrc` depending on
 
 3. build
 
-You will need yarn and maven installed on your system. Once installed, go to the project directory and
-execute the following commands in order.
+    You will need yarn and maven installed on your system. Once installed, go to the project directory and
+    execute the following commands in order.
+    
+    ```
+    cd src/main/ui
+    yarn
+    yarn run build
+    cd ../../../
+    mvn clean package -DskipTests
+    ```
 
-```
-cd src/main/ui
-yarn
-yarn run build
-cd ../../../
-mvn clean package -DskipTests
-```
+4. Run 
 
-Step 4. 
-
-Run the jar maven created in the target folder of the project root directory. 
-Specify the port you chose in FAKE_SMTP_WEB_API, eg 60500 using `-Dserver.port` option unless you use the default 8080.
-
-`java -Dserver.port=60500 -jar target/fakesmtp-web-1.2.jar`
+    Run the jar maven created in the target folder of the project root directory. 
+    Specify the port you chose in FAKE_SMTP_WEB_API, eg 60500 using `-Dserver.port` option unless you use the default 8080.
+    
+    `java -Dserver.port=60500 -jar target/fakesmtp-web-1.2.jar`
 
 # Set context path
-Step 1.
-When you want to set context path, you can do it for spring boot using `server.servlet.context-path` property.
-In addition you need to update the `FAKE_SMTP_WEB_API` variable.
-for example if you add context path as 
-`server.servlet.context-path=/mail`
-append the context to `FAKE_SMTP_WEB_API` as below
-`http://localhost:8080 -> http://localhost:8080/mail` 
 
-Same applies to port number as well.
-Note : for standalone(no docker) implementation we can keep same port number. 
+1.
+    When you want to set context path, you can do it for spring boot using `server.servlet.context-path` property.
+    In addition, you need to update the `FAKE_SMTP_WEB_API` variable.
+    
+    For example if you add context path as 
+    ```
+     server.servlet.context-path=/mail
+    ```
+   
+    append the context to `FAKE_SMTP_WEB_API` as below
+    
+    ```
+    http://localhost:8080 -> http://localhost:8080/mail 
+    ```
 
-Step 2.
-Change `publicPath` in file below to update the context path. 
-src\main\ui\webpack.config.js
-for eg. if context path is `/mail` make change as 
-`const publicPath = (env === 'prod') ? '/ui/' : '/';`
-`const publicPath = (env === 'prod') ? '/mail/ui/' : '/';`
+    Same applies to the port number as well.
+    Note : For the standalone (no docker) implementation, we can keep same port number.
 
-Step 3.
-Recompile the application using step 3 mentioned above.
+2.
+    Change `publicPath` in file below to update the context path. 
+    `src\main\ui\webpack.config.js`
+    
+    Example: if context path is `/mail` make change as 
+    
+    ```
+      const publicPath = (env === 'prod') ? '/ui/' : '/';
+      const publicPath = (env === 'prod') ? '/mail/ui/' : '/';
+    ```
+
+3.
+    Recompile the application.
 
 # Implementation details
 - Spring Boot
